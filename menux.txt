@@ -1,0 +1,20 @@
+
+                 STUDENT MANAGEMENT SYSTEM        
+    ==================================================
+         Select any option from the menu below:
+    -------------------------------------------------
+      [1]  Add New Student Record
+      [2]  View All Student Records
+      [3]  Search for a Student
+      [4]  Delete a Student Record
+      [5]  Update a Student Record
+      [6]  Calculate Average Grade
+      [7]  Sort Records by Name or ID
+      [8]  Display Top Performer(s)
+      [9]  Grade Analysis
+      [10] Save Records to File
+      [11] Load Records from File
+      [12] Track Attendance
+      [13] Goto Login Menu
+      [14] Exit System
+    --------------------------------------------------
