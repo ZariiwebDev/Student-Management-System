@@ -26,6 +26,43 @@ void currentLoginStatus(void);
 void mainMenuDisplay(void);
 void mainMenu(void);
 
+//! Student Record Prototype & structure
+struct StudentPersonalInformation
+{
+    string fullName;
+    string dob;
+    char gender;
+    string stdID;
+    bool validateID(string);
+};
+struct StudentContactInformation{
+    int phoneNumber;
+    string emailAddress;
+    bool validateEmail();
+};
+struct StudentAcedamicInformation{
+    int noOfcourses;                              // number of courses a student has been EnrolledIn 
+    string *coursesNames = new string;           // stores the courses names
+    void getCoursesNames();                     /* adds the courses names into @param coursesNames */
+    int *coursesTotalMarks = new int;          // stores the total marks of each course
+    void getCoursesTotalMarks();              /* adds the courses names into @param coursesNames */
+    int *coursesObtainedMarks = new int;     // stores the obtained marks of each course
+    void getCoursesObtainedMarks();         /* adds the courses names into @param coursesObtainedMarks */
+    int totalInternalMarks;                // stores total marks of quiz lab assessments
+    int obtainedInternalMarks;            // stores obtained of totalInternalMarks
+};
+struct Student{
+    StudentPersonalInformation personalInfo;
+    StudentContactInformation contactInfo;
+    StudentAcedamicInformation acedamicInfo;
+};
+
+void addNewStudent();
+string generateStudentID();
+
+
+
+//!                                 "MAIN SCOPE "
 int main() {
     bool res = loginMenu();
     if(res){
@@ -258,7 +295,11 @@ void mainMenu(){
                 cout<<"\033[31m Sorry no option found ! TRY AGAIN..\033[0m\n";
             }
         }while(!(choice>=1 && choice<=14));
-        if(choice==13){
+        if(choice==1){
+            cout<<"\033[32m-▶>> You Selected Option 1\033[0m"<<endl;
+            addNewStudent();        // addind new student
+        }
+        else if(choice==13){
             cout<<"\033[32m-▶>> You Selected Option 13\033[0m"<<endl;
             loginMenu();
             break;
@@ -269,4 +310,62 @@ void mainMenu(){
             exit(0);
         }
     }while(true);
+}
+
+
+//!         [1]- adding new student Record
+void addNewStudent(){
+    bool choice=false;
+    int trackNumberOfStudentsAdded=1;
+    Student* students= new Student;
+    do{
+        cout<<"/033[34m\t\t PERSONAL INFORMATION :\033[0m\n";
+        cout<<"\tEnter Your Full Name (e.g Uzair Akram): ";
+        cin.ignore();
+        getline(cin,students->personalInfo.fullName);
+        cout<<"Enter your Date of Birth format:dd/mm/yy : ";
+        cin.ignore();
+        getline(cin,students->personalInfo.dob);
+        do{
+            cout<<"Gender ? (M/F/O)";
+            cin>>students->personalInfo.gender;
+            if(tolower(students->personalInfo.gender) !='m' && tolower(students->personalInfo.gender) !='f' && tolower(students->personalInfo.gender) !='o'){
+                
+            }
+        }while(tolower(students->personalInfo.gender) !='m' && tolower(students->personalInfo.gender) !='f' && tolower(students->personalInfo.gender) !='o');
+        cout<<"Generating ....\n";
+        students->personalInfo.stdID = generateStudentID();
+        if(students->personalInfo.validateID(students->personalInfo.stdID)){
+                cout<<"Student ID assigned : \033[34m"<<students->personalInfo.stdID<<"\033[0m"<<endl;
+        }
+    }while(choice);
+
+
+    delete students;
+}
+
+//! generating student ID 
+string generateStudentID(){
+    srand(time(0));
+    string ID="";
+    string numbers = "0123456789";
+    for(int i=0;i<4;i++){
+        int randomIndex = rand() % 10;
+        ID += numbers[randomIndex];
+    }
+    return ID;
+}
+
+//! Validating Student ID
+bool StudentPersonalInformation::validateID(string Id){
+        if(Id.length()==4){
+            for(char ch : Id){
+                if(!isdigit(ch)){
+                    return false;
+                }
+            }
+            return true;
+        }
+
+    return false;
 }
