@@ -11,6 +11,6 @@
       [10] Save Records to File          
       [11] Load Records from File        
       [12] Track Attendance             
-      [13] Goto Login Menu               
-      [14] Exit System                   
-  
+      [13] Goto Login Menu       [✅]        
+      [14] Exit System           [✅]        
+      
