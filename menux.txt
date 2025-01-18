@@ -1,16 +1,16 @@
 
-      [1]  Add New Student Record        - UME  ROMAN 
-      [2]  View All Student Records      - UME E ROMAN 
-      [3]  Search for a Student          - AHTASHAM GHAZI 
-      [4]  Delete a Student Record       - AHTASHAM GHAZI 
-      [5]  Update a Student Record       - UZAIR
-      [6]  Calculate Average Grade       - ANJUM BILAL
-      [7]  Sort Records by Name or ID    - UZAIR
-      [8]  Display Top Performer(s)      - UZAIR
-      [9]  Grade Analysis                - UZAIR
-      [10] Save Records to File          - UZAIR
-      [11] Load Records from File        - UZAIR
-      [12] Track Attendance              - TAHIR 
-      [13] Goto Login Menu               - UZAIR
-      [14] Exit System                   - UZAIR
+      [1]  Add New Student Record        
+      [2]  View All Student Records      
+      [3]  Search for a Student          
+      [4]  Delete a Student Record       
+      [5]  Update a Student Record       
+      [6]  Calculate Average Grade       
+      [7]  Sort Records by Name or ID    
+      [8]  Display Top Performer(s)      
+      [9]  Grade Analysis                
+      [10] Save Records to File          
+      [11] Load Records from File        
+      [12] Track Attendance             
+      [13] Goto Login Menu               
+      [14] Exit System                   
   
