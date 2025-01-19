@@ -36,17 +36,17 @@ struct StudentPersonalInformation
     bool validateID(string);
 };
 struct StudentContactInformation{
-    int phoneNumber;
+    string phoneNumber;
     string emailAddress;
     bool validateEmail();
 };
 struct StudentAcedamicInformation{
-    int noOfcourses;                              // number of courses a student has been EnrolledIn 
-    string *coursesNames = new string;           // stores the courses names
+    int noOfcourses=6;                              // number of courses a student has been EnrolledIn 
+    string *coursesNames = new string[noOfcourses];           // stores the courses names
     void getCoursesNames();                     /* adds the courses names into @param coursesNames */
-    int *coursesTotalMarks = new int;          // stores the total marks of each course
+    int *coursesTotalMarks = new int[noOfcourses];          // stores the total marks of each course
     void getCoursesTotalMarks();              /* adds the courses names into @param coursesNames */
-    int *coursesObtainedMarks = new int;     // stores the obtained marks of each course
+    int *coursesObtainedMarks = new int[noOfcourses];     // stores the obtained marks of each course
     void getCoursesObtainedMarks();         /* adds the courses names into @param coursesObtainedMarks */
     int totalInternalMarks;                // stores total marks of quiz lab assessments
     int obtainedInternalMarks;            // stores obtained of totalInternalMarks
@@ -57,10 +57,13 @@ struct Student{
     StudentAcedamicInformation acedamicInfo;
 };
 
-void addNewStudent();
+
+void addNewStudent(Student*,int&);
+void studentRecord(int);
 string generateStudentID();
-
-
+bool validateStudentName(string studentName);
+bool validateDob(string dob);
+bool validatePhoneNumber(string phoneNumber);
 
 //!                                 "MAIN SCOPE "
 int main() {
@@ -284,6 +287,7 @@ void mainMenuDisplay(){
        cout<<"╰──────────────···"<<endl;
 }
 void mainMenu(){
+    char choiceMenu;
     do{
         int choice;
         mainMenuDisplay();
@@ -297,7 +301,11 @@ void mainMenu(){
         }while(!(choice>=1 && choice<=14));
         if(choice==1){
             cout<<"\033[32m-▶>> You Selected Option 1\033[0m"<<endl;
-            addNewStudent();        // addind new student
+            studentRecord(choice);        // adding new student
+        }
+        else if(choice==2){ 
+            cout<<"\033[32m-▶>> You Selected Option 2\033[0m"<<endl;
+            studentRecord(choice);
         }
         else if(choice==13){
             cout<<"\033[32m-▶>> You Selected Option 13\033[0m"<<endl;
@@ -309,41 +317,193 @@ void mainMenu(){
             cout<<"Thanks ! GoodBye "<<endl;
             exit(0);
         }
-    }while(true);
+        cout<<"Do you want to continue ? (y/n) : ";
+        cin>>choiceMenu;
+        if(tolower(choiceMenu) != 'y'){
+            cout<<"GoodeBye ....\n";
+            break;
+        }
+    }while(tolower(choiceMenu) == 'y');
+}
+
+void studentRecord(int choice){
+     int trackNumberOfStudentsAdded=1;
+    Student* students= new Student[trackNumberOfStudentsAdded];
+        if(choice ==1){
+            addNewStudent(students,trackNumberOfStudentsAdded);
+        }else if(choice==2){
+            cout<<"Display";
+        }
+
+    delete[] students;
 }
 
 
-//!         [1]- adding new student Record
-void addNewStudent(){
+//!     adding new student Record
+void addNewStudent(Student* students,int& trackNumberOfStudentsAdded){
     bool choice=false;
-    int trackNumberOfStudentsAdded=1;
-    Student* students= new Student;
     do{
-        cout<<"/033[34m\t\t PERSONAL INFORMATION :\033[0m\n";
-        cout<<"\tEnter Your Full Name (e.g Uzair Akram): ";
-        cin.ignore();
-        getline(cin,students->personalInfo.fullName);
-        cout<<"Enter your Date of Birth format:dd/mm/yy : ";
-        cin.ignore();
-        getline(cin,students->personalInfo.dob);
+        for(int i=0;i<trackNumberOfStudentsAdded;i++){
+        cout<<"\033[34m\t\t PERSONAL INFORMATION :\033[0m\n";
+        do{
+            cin.ignore();
+            cout<<"\tEnter Your Full Name (e.g Uzair Akram): ";
+            getline(cin,students[i].personalInfo.fullName);
+            if(!validateStudentName(students[i].personalInfo.fullName)){
+                beep();
+                cout<<"\033[31m Please Enter a correct name , name must be 4 characters long and does not include any digit or symbols !\033[0m\n";
+            }
+        }while(!validateStudentName(students[i].personalInfo.fullName));
+
+        do{
+            cin.ignore();
+            cout<<"Enter your Date of Birth format:dd/mm/yy : ";
+            getline(cin,students[i].personalInfo.dob);
+        }while(!validateDob(students[i].personalInfo.dob));
         do{
             cout<<"Gender ? (M/F/O)";
-            cin>>students->personalInfo.gender;
-            if(tolower(students->personalInfo.gender) !='m' && tolower(students->personalInfo.gender) !='f' && tolower(students->personalInfo.gender) !='o'){
-                
+            cin>>students[i].personalInfo.gender;
+            if(tolower(students[i].personalInfo.gender) !='m' && tolower(students[i].personalInfo.gender) !='f' && tolower(students[i].personalInfo.gender) !='o'){
+                beep();
+                cout<<"\033[31m Please Enter Correct Gender ! \033[0m\n";
             }
-        }while(tolower(students->personalInfo.gender) !='m' && tolower(students->personalInfo.gender) !='f' && tolower(students->personalInfo.gender) !='o');
+        }while(tolower(students[i].personalInfo.gender) !='m' && tolower(students[i].personalInfo.gender) !='f' && tolower(students[i].personalInfo.gender) !='o');
         cout<<"Generating ....\n";
-        students->personalInfo.stdID = generateStudentID();
-        if(students->personalInfo.validateID(students->personalInfo.stdID)){
-                cout<<"Student ID assigned : \033[34m"<<students->personalInfo.stdID<<"\033[0m"<<endl;
+        students[i].personalInfo.stdID = generateStudentID();
+        if(students[i].personalInfo.validateID(students[i].personalInfo.stdID)){
+                cout<<"Student ID assigned : \033[34m"<<students[i].personalInfo.stdID<<"\033[0m"<<endl;
+        }
+        do{
+        cin.ignore();
+        cout<<"\033[34m\t\t CONTACT INFORMATION :\033[0m\n";
+        cout<<"Enter Emergency Contact Number : ";
+        cin>>students[i].contactInfo.phoneNumber;
+        }while(!validatePhoneNumber(students[i].contactInfo.phoneNumber));
+        do{
+            cin.ignore();
+            cout<<"Enter your Email Address : ";
+            cin>>students[i].contactInfo.emailAddress;
+            if(!students[i].contactInfo.validateEmail()){
+                beep();
+                cout<<"\033[31mSorry! Please enter correct email address !\033[0m\n";
+            }
+        }while(!students[i].contactInfo.validateEmail());
+
+        cout<<"\033[34m\t\t ACEDAMICS INFORMATION :\033[0m\n";
+        do{
+            cout<<"Enter how many courses have you Enrolled In ! : ";
+            cin>>students[i].acedamicInfo.noOfcourses;
+        }while(students[i].acedamicInfo.noOfcourses<0 && students[i].acedamicInfo.noOfcourses>100);
+        students[i].acedamicInfo.getCoursesNames();
+        students[i].acedamicInfo.getCoursesTotalMarks();        
+        students[i].acedamicInfo.getCoursesObtainedMarks();        
+        }
+        cout<<"Do you want to add more students data ? (press 0 for no / press 1 for yes):";
+        cin>>choice;
+        if(choice==1){
+            choice=true;
+            trackNumberOfStudentsAdded++;
+        }
+        else if (choice !=1){
+            break;
         }
     }while(choice);
-
-
-    delete students;
 }
 
+
+//! Validating Student Name
+bool validateStudentName(string studentName){
+    if(studentName.length()>=1){
+        for(char ch : studentName){
+            if(!isalpha(ch) && !isspace(ch)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    return false;
+}
+//! Validating Dob
+bool validateDob(string dob){
+    bool slash = true;
+    string date="";
+    string month="";
+    string year="";
+    int dateEndIndex = dob.find('/');
+    if(dateEndIndex<dob.length()){
+        date = dob.substr(0,dateEndIndex);
+        int monthLastIndex = dob.find('/',(dateEndIndex+1));
+            if(monthLastIndex<dob.length()){
+                month = dob.substr((dateEndIndex+1),(monthLastIndex-(dateEndIndex+1)));
+                year = dob.substr((monthLastIndex+1),(dob.length()-(monthLastIndex+1)));
+            }else{
+                slash=false;
+            }
+    }else{
+        slash=false;
+    }
+
+    if(slash){
+        int dateInt = stoi(date); 
+        int monthInt = stoi(month);
+        if(!(dateInt>=1 && dateInt<=31)){
+            cout<<"\033[32m Date must be within 1-31\033[0m\n";
+            return false;
+        }else if (!(monthInt>=1 && monthInt<=12)){
+            cout<<"\033[32m Month must be within 1-12\033[0m\n";
+            return false;
+        }
+        return true;
+    }else{
+        cout<<"\n\033[31m Sorry Dob was not in dd/mm/yy format !\033[0m"<<endl;
+        return false;
+    }
+}
+// ! Validating phone Number
+bool validatePhoneNumber(string phoneNumber){
+    if(phoneNumber[0]=='+'){
+        cout<<"\033[31m Please Enter number without + \033[0m\n";
+        return false;
+    }
+    else{
+        for(char ch : phoneNumber){
+                if(!isdigit(ch)){
+                    return false;
+                }
+        }
+        return true;   
+    }
+
+    return false;
+}
+// !   Taking user input in Acedamics Record
+void StudentAcedamicInformation::getCoursesNames(){
+        for(int j=0;j<noOfcourses;j++){
+            do{
+                cin.ignore();  
+                cout<<"Enter Course "<<(j+1)<<" Name :";
+                getline(cin,coursesNames[j]);
+            }while(!validateStudentName(coursesNames[j]));
+        }
+}
+
+void StudentAcedamicInformation::getCoursesTotalMarks(){
+        for(int j=0;j<noOfcourses;j++){
+            do{
+            cout<<"Enter Total Marks "<<coursesNames[j]<<" :";
+            cin>>coursesTotalMarks[j];
+            }while(coursesTotalMarks[j]<0 || coursesTotalMarks[j]>100);
+        }
+}
+void StudentAcedamicInformation::getCoursesObtainedMarks(){
+        for(int j=0;j<noOfcourses;j++){
+            do{
+            cout<<"Enter Obtained Marks "<<coursesNames[j]<<":";
+            cin>>coursesObtainedMarks[j];
+            }while(coursesObtainedMarks[j]<0 || coursesObtainedMarks[j]>100 || coursesObtainedMarks[j]>coursesTotalMarks[j]);
+        }
+}
 //! generating student ID 
 string generateStudentID(){
     srand(time(0));
@@ -368,4 +528,17 @@ bool StudentPersonalInformation::validateID(string Id){
         }
 
     return false;
+}
+
+//! Validating Gmail Address
+bool StudentContactInformation::validateEmail(){
+    bool find=false;
+    for(char ch : emailAddress){
+            if(ch =='@'){
+                find=true;
+                break;
+            }
+    }
+
+    return find;
 }
