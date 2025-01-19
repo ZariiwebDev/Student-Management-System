@@ -2,6 +2,7 @@
 #include"string"
 #include"cctype"
 #include"windows.h"
+#include"iomanip"
 #include"fstream"
 #include"time.h"
 #include"math.h"
@@ -27,6 +28,7 @@ void mainMenuDisplay(void);
 void mainMenu(void);
 
 //! Student Record Prototype & structure
+// ! ADD NEW RECORD [1]
 struct StudentPersonalInformation
 {
     string fullName;
@@ -41,15 +43,16 @@ struct StudentContactInformation{
     bool validateEmail();
 };
 struct StudentAcedamicInformation{
-    int noOfcourses=6;                              // number of courses a student has been EnrolledIn 
+    int noOfcourses=10;                                        // number of courses a student has been EnrolledIn 
     string *coursesNames = new string[noOfcourses];           // stores the courses names
-    void getCoursesNames();                     /* adds the courses names into @param coursesNames */
+    void getCoursesNames();                                  /* adds the courses names into @param coursesNames */
     int *coursesTotalMarks = new int[noOfcourses];          // stores the total marks of each course
-    void getCoursesTotalMarks();              /* adds the courses names into @param coursesNames */
+    void getCoursesTotalMarks();                           /* adds the courses names into @param coursesNames */
     int *coursesObtainedMarks = new int[noOfcourses];     // stores the obtained marks of each course
-    void getCoursesObtainedMarks();         /* adds the courses names into @param coursesObtainedMarks */
-    int totalInternalMarks;                // stores total marks of quiz lab assessments
-    int obtainedInternalMarks;            // stores obtained of totalInternalMarks
+    void getCoursesObtainedMarks();                      /* adds the courses names into @param coursesObtainedMarks */
+    char* coursesGrades = new char[noOfcourses];
+    void setCoursesGrades();
+    char calcgrade(int);
 };
 struct Student{
     StudentPersonalInformation personalInfo;
@@ -58,13 +61,14 @@ struct Student{
 };
 
 
-void addNewStudent(Student*,int&);
-void studentRecord(int);
+void addNewStudent(Student[],int&);
 string generateStudentID();
 bool validateStudentName(string studentName);
 bool validateDob(string dob);
 bool validatePhoneNumber(string phoneNumber);
 
+//! VIEW RECORDS [2]
+void viewRecords(Student[],int);
 //!                                 "MAIN SCOPE "
 int main() {
     bool res = loginMenu();
@@ -287,6 +291,9 @@ void mainMenuDisplay(){
        cout<<"╰──────────────···"<<endl;
 }
 void mainMenu(){
+    int trackNumberOfStudentsAdded=0;
+    Student students[1000];
+    bool track=false;
     char choiceMenu;
     do{
         int choice;
@@ -299,13 +306,20 @@ void mainMenu(){
                 cout<<"\033[31m Sorry no option found ! TRY AGAIN..\033[0m\n";
             }
         }while(!(choice>=1 && choice<=14));
+        
         if(choice==1){
             cout<<"\033[32m-▶>> You Selected Option 1\033[0m"<<endl;
-            studentRecord(choice);        // adding new student
+            addNewStudent(students,trackNumberOfStudentsAdded);        // adding new student
+            track=true;
         }
-        else if(choice==2){ 
-            cout<<"\033[32m-▶>> You Selected Option 2\033[0m"<<endl;
-            studentRecord(choice);
+        else if(choice==2){
+            if(track){
+                cout<<"\033[32m-▶>> You Selected Option 2\033[0m"<<endl;
+                viewRecords(students,trackNumberOfStudentsAdded);
+            }else{
+                cout<<"\033[32m-▶>> You Selected Option 2\033[0m"<<endl;
+                cout<<"No records found please first add record !\n";
+            }
         }
         else if(choice==13){
             cout<<"\033[32m-▶>> You Selected Option 13\033[0m"<<endl;
@@ -324,26 +338,15 @@ void mainMenu(){
             break;
         }
     }while(tolower(choiceMenu) == 'y');
+
 }
-
-void studentRecord(int choice){
-     int trackNumberOfStudentsAdded=1;
-    Student* students= new Student[trackNumberOfStudentsAdded];
-        if(choice ==1){
-            addNewStudent(students,trackNumberOfStudentsAdded);
-        }else if(choice==2){
-            cout<<"Display";
-        }
-
-    delete[] students;
-}
-
 
 //!     adding new student Record
-void addNewStudent(Student* students,int& trackNumberOfStudentsAdded){
-    bool choice=false;
-    do{
-        for(int i=0;i<trackNumberOfStudentsAdded;i++){
+void addNewStudent(Student students[],int& trackNumberOfStudentsAdded){
+    cout<<"How many students to add ? ";
+    cin>>trackNumberOfStudentsAdded;
+    for(int i=0;i<trackNumberOfStudentsAdded;i++){
+        cout<<"\t Student: "<<i+1<<endl;
         cout<<"\033[34m\t\t PERSONAL INFORMATION :\033[0m\n";
         do{
             cin.ignore();
@@ -354,11 +357,9 @@ void addNewStudent(Student* students,int& trackNumberOfStudentsAdded){
                 cout<<"\033[31m Please Enter a correct name , name must be 4 characters long and does not include any digit or symbols !\033[0m\n";
             }
         }while(!validateStudentName(students[i].personalInfo.fullName));
-
         do{
-            cin.ignore();
             cout<<"Enter your Date of Birth format:dd/mm/yy : ";
-            getline(cin,students[i].personalInfo.dob);
+            cin>>students[i].personalInfo.dob;
         }while(!validateDob(students[i].personalInfo.dob));
         do{
             cout<<"Gender ? (M/F/O)";
@@ -388,7 +389,6 @@ void addNewStudent(Student* students,int& trackNumberOfStudentsAdded){
                 cout<<"\033[31mSorry! Please enter correct email address !\033[0m\n";
             }
         }while(!students[i].contactInfo.validateEmail());
-
         cout<<"\033[34m\t\t ACEDAMICS INFORMATION :\033[0m\n";
         do{
             cout<<"Enter how many courses have you Enrolled In ! : ";
@@ -396,20 +396,11 @@ void addNewStudent(Student* students,int& trackNumberOfStudentsAdded){
         }while(students[i].acedamicInfo.noOfcourses<0 && students[i].acedamicInfo.noOfcourses>100);
         students[i].acedamicInfo.getCoursesNames();
         students[i].acedamicInfo.getCoursesTotalMarks();        
-        students[i].acedamicInfo.getCoursesObtainedMarks();        
-        }
-        cout<<"Do you want to add more students data ? (press 0 for no / press 1 for yes):";
-        cin>>choice;
-        if(choice==1){
-            choice=true;
-            trackNumberOfStudentsAdded++;
-        }
-        else if (choice !=1){
-            break;
-        }
-    }while(choice);
+        students[i].acedamicInfo.getCoursesObtainedMarks();
+        students[i].acedamicInfo.setCoursesGrades();
+        cout<<"Data Sucessfully saved for student "<<(i+1)<<endl;
+    }
 }
-
 
 //! Validating Student Name
 bool validateStudentName(string studentName){
@@ -504,6 +495,32 @@ void StudentAcedamicInformation::getCoursesObtainedMarks(){
             }while(coursesObtainedMarks[j]<0 || coursesObtainedMarks[j]>100 || coursesObtainedMarks[j]>coursesTotalMarks[j]);
         }
 }
+void StudentAcedamicInformation::setCoursesGrades(){
+    for(int j=0;j<noOfcourses;j++){
+        coursesGrades[j] = calcgrade(j);
+    }
+}
+//! calculating grades
+char StudentAcedamicInformation::calcgrade(int index){
+    float percentage = (coursesObtainedMarks[index]/(float)coursesTotalMarks[index] )*100.0;
+    if(percentage<33){
+        return 'F';
+    }
+    else if(percentage>=33 && percentage<40){
+        return 'D';
+    }
+    else if(percentage>=40 && percentage<66){
+        return 'C';
+    }
+    else if(percentage>=66 && percentage<80){
+        return 'B';
+    }
+    else if(percentage>=80){
+        return 'A';
+    }else{
+        return 'N';         // no grade
+    }    
+}
 //! generating student ID 
 string generateStudentID(){
     srand(time(0));
@@ -541,4 +558,44 @@ bool StudentContactInformation::validateEmail(){
     }
 
     return find;
+}
+void viewRecords(Student students[],int noOfStds){
+    cout<<"\033[33m\t\tNUMBER OF STUDENTS FOUND "<<(noOfStds)<<"\033[0m\n";
+    cout<<"╭───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
+    cout<<"│\n";
+    for(int i=0;i<noOfStds;i++){
+    cout<<"│-▶>> \033[32mStudent ID: \033[31m"<<students[i].personalInfo.stdID<<"\033[0m\n";
+    cout<<"│\n";
+    cout<<"│\t\033[34mPERSONAL INFORMATION \033[0m\n";
+    cout<<"│\n";
+    cout<<"│\t\tFull Name: "<<students[i].personalInfo.fullName<<"\n";
+    cout<<"│\n";
+    cout<<"│\t\tDOB: "<<students[i].personalInfo.dob<<"\n";
+    cout<<"│\n";
+    cout<<"│\t\tGender: "<<students[i].personalInfo.gender<<"\n";
+    cout<<"│\n";
+    cout<<"│\t\tStudent ID: "<<students[i].personalInfo.stdID<<"\n";
+    cout<<"│\n";
+    cout<<"│\t\033[34mCONTACT INFORMATION \033[0m\n";
+    cout<<"│\n";
+    cout<<"│\t\tPhone Number: "<<students[i].contactInfo.phoneNumber<<"\n";
+    cout<<"│\n";
+    cout<<"│\t\tEmail: \033[36m"<<students[i].contactInfo.emailAddress<<"\033[0m\n";
+    cout<<"│\n";
+    cout<<"│\t\033[34mACEDAMICS INFORMATION \033[0m\n";
+    cout<<"│\n";
+    cout<<"│\t\tCourses Enrolled: "<<students[i].acedamicInfo.noOfcourses<<"\n";
+    cout<<"│\n";
+    cout<<"│\t\t\t\t╭────────────────────────────────────────────────────────────────────╮\n";
+    cout<<"│\t\t\t\t│NAMES"<<"\t\t"<<"TOTAL MARKS"<<"\t\t"<<"OBTAINED MARKS"<<"\t\t"<<"GRADE│"<<"\n";
+    cout<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
+    for(int j=0;j<students[i].acedamicInfo.noOfcourses;j++){
+    cout<<"│\t\t\t\t│"<<fixed<<students[i].acedamicInfo.coursesNames[j]<<fixed<<setw(18)<<students[i].acedamicInfo.coursesTotalMarks[j]<<setw(28)<<students[i].acedamicInfo.coursesObtainedMarks[j]<<setw(18)<<students[i].acedamicInfo.coursesGrades[j]<<setw(6)<<fixed<<"│\n";
+    }
+    cout<<"│\t\t\t\t╰────────────────────────────────────────────────────────────────────╯\n";
+    cout<<"│\n";
+    cout<<"│\n";
+    }
+    cout<<"│\n";
+    cout<<"╰───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
 }
