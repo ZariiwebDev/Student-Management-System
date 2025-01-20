@@ -28,7 +28,7 @@ void mainMenuDisplay(void);
 void mainMenu(void);
 
 //! Student Record Prototype & structure
-// ! ADD NEW RECORD [1]
+// ! ADD NEW RECORD 
 struct StudentPersonalInformation
 {
     string fullName;
@@ -67,8 +67,12 @@ bool validateStudentName(string studentName);
 bool validateDob(string dob);
 bool validatePhoneNumber(string phoneNumber);
 
-//! VIEW RECORDS [2]
+//! VIEW RECORDS
 void viewRecords(Student[],int);
+void viewRecords(Student[],int,int);
+
+// ! SEARCH FOR A STUDENT
+void searchStudents(Student[],int);
 //!                                 "MAIN SCOPE "
 int main() {
     bool res = loginMenu();
@@ -292,7 +296,7 @@ void mainMenuDisplay(){
 }
 void mainMenu(){
     int trackNumberOfStudentsAdded=0;
-    Student students[1000];
+    Student students[100];
     bool track=false;
     char choiceMenu;
     do{
@@ -318,6 +322,15 @@ void mainMenu(){
                 viewRecords(students,trackNumberOfStudentsAdded);
             }else{
                 cout<<"\033[32m-▶>> You Selected Option 2\033[0m"<<endl;
+                cout<<"No records found please first add record !\n";
+            }
+        }
+        else if(choice==3){
+            if(track){
+                cout<<"\033[32m-▶>> You Selected Option 3\033[0m"<<endl;
+                searchStudents(students,trackNumberOfStudentsAdded);
+            }else{
+                cout<<"\033[32m-▶>> You Selected Option 3\033[0m"<<endl;
                 cout<<"No records found please first add record !\n";
             }
         }
@@ -598,4 +611,60 @@ void viewRecords(Student students[],int noOfStds){
     }
     cout<<"│\n";
     cout<<"╰───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
+}
+
+// !    Serach for Students -> 3
+void searchStudents(Student students[],int noOfStudents){
+        string userInput="";
+        cout<<"Enter Student ID or Name To Search :";
+        cin>>userInput;
+
+        // ! Linear Search
+        for(int i=0 ;i<noOfStudents;i++){
+                if(!students[i].personalInfo.fullName.compare(userInput) || !students[i].personalInfo.stdID.compare(userInput)){
+                        viewRecords(students,noOfStudents,i);
+                }else{
+                    cout<<"Sorry No Record found with "<<userInput<<endl;
+                }               
+        }
+}
+//! Display Search records
+void viewRecords(Student students[],int noOfStds,int index){
+    cout<<"\033[33m\t\t STUDENT FOUND "<<"\033[0m\n";
+    cout<<"╭───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
+    cout<<"│\n";
+    cout<<"│-▶>> \033[32mStudent ID: \033[31m"<<students[index].personalInfo.stdID<<"\033[0m\n";
+    cout<<"│\n";
+    cout<<"│\t\033[34mPERSONAL INFORMATION \033[0m\n";
+    cout<<"│\n";
+    cout<<"│\t\tFull Name: "<<students[index].personalInfo.fullName<<"\n";
+    cout<<"│\n";
+    cout<<"│\t\tDOB: "<<students[index].personalInfo.dob<<"\n";
+    cout<<"│\n";
+    cout<<"│\t\tGender: "<<students[index].personalInfo.gender<<"\n";
+    cout<<"│\n";
+    cout<<"│\t\tStudent ID: "<<students[index].personalInfo.stdID<<"\n";
+    cout<<"│\n";
+    cout<<"│\t\033[34mCONTACT INFORMATION \033[0m\n";
+    cout<<"│\n";
+    cout<<"│\t\tPhone Number: "<<students[index].contactInfo.phoneNumber<<"\n";
+    cout<<"│\n";
+    cout<<"│\t\tEmail: \033[36m"<<students[index].contactInfo.emailAddress<<"\033[0m\n";
+    cout<<"│\n";
+    cout<<"│\t\033[34mACEDAMICS INFORMATION \033[0m\n";
+    cout<<"│\n";
+    cout<<"│\t\tCourses Enrolled: "<<students[index].acedamicInfo.noOfcourses<<"\n";
+    cout<<"│\n";
+    cout<<"│\t\t\t\t╭────────────────────────────────────────────────────────────────────╮\n";
+    cout<<"│\t\t\t\t│NAMES"<<"\t\t"<<"TOTAL MARKS"<<"\t\t"<<"OBTAINED MARKS"<<"\t\t"<<"GRADE│"<<"\n";
+    cout<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
+    for(int j=0;j<students[index].acedamicInfo.noOfcourses;j++){
+    cout<<"│\t\t\t\t│"<<fixed<<students[index].acedamicInfo.coursesNames[j]<<fixed<<setw(18)<<students[index].acedamicInfo.coursesTotalMarks[j]<<setw(28)<<students[index].acedamicInfo.coursesObtainedMarks[j]<<setw(18)<<students[index].acedamicInfo.coursesGrades[j]<<setw(6)<<fixed<<"│\n";
+    }
+    cout<<"│\t\t\t\t╰────────────────────────────────────────────────────────────────────╯\n";
+    cout<<"│\n";
+    cout<<"│\n";
+    cout<<"│\n";
+    cout<<"╰───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
+    cout<<"\n\n";
 }
