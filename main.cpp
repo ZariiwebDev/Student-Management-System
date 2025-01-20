@@ -73,6 +73,10 @@ void viewRecords(Student[],int,int);
 
 // ! SEARCH FOR A STUDENT
 void searchStudents(Student[],int);
+// ! Update student record by ID
+void updateRecordsMenu(void);
+int studentID(Student[],int,string);        // --> returns the index of found id if not found return -1
+void updateRecord(Student[],int);
 //!                                 "MAIN SCOPE "
 int main() {
     bool res = loginMenu();
@@ -333,6 +337,61 @@ void mainMenu(){
                 cout<<"\033[32m-▶>> You Selected Option 3\033[0m"<<endl;
                 cout<<"No records found please first add record !\n";
             }
+        }
+        else if(choice==4){
+             if(track){
+                cout<<"\033[32m-▶>> You Selected Option 4\033[0m"<<endl;
+            }else{
+                cout<<"\033[32m-▶>> You Selected Option 4\033[0m"<<endl;
+                cout<<"No records found to delete please first add record !\n";
+            }
+        }
+        else if(choice==5){
+             if(track){
+                cout<<"\033[32m-▶>> You Selected Option 5\033[0m"<<endl;
+                updateRecord(students,trackNumberOfStudentsAdded);
+            }else{
+                cout<<"\033[32m-▶>> You Selected Option 5\033[0m"<<endl;
+                cout<<"No records found to update please first add record !\n";
+            }
+        }
+        else if(choice==6){
+            if(track){
+                cout<<"\033[32m-▶>> You Selected Option 6\033[0m"<<endl;
+            }else{
+                cout<<"\033[32m-▶>> You Selected Option 6\033[0m"<<endl;
+                cout<<"No records found to Calculate Grades please first add record !\n";
+            }
+        }
+        else if(choice==7){
+            if(track){
+                cout<<"\033[32m-▶>> You Selected Option 7\033[0m"<<endl;
+            }else{
+                cout<<"\033[32m-▶>> You Selected Option 7\033[0m"<<endl;
+                cout<<"No records found to sort please first add record !\n";
+            }
+        }
+        else if(choice==8){
+            if(track){
+                cout<<"\033[32m-▶>> You Selected Option 8\033[0m"<<endl;
+            }else{
+                cout<<"\033[32m-▶>> You Selected Option 8\033[0m"<<endl;
+                cout<<"No records found to Calculate Grades please first add record !\n";
+            }
+        }
+        else if(choice==9){
+            if(track){
+                cout<<"\033[32m-▶>> You Selected Option 9\033[0m"<<endl;
+            }else{
+                cout<<"\033[32m-▶>> You Selected Option 9\033[0m"<<endl;
+                cout<<"No records found to Calculate Grades please first add record !\n";
+            }
+        }
+        else if(choice==10){
+                cout<<"\033[32m-▶>> You Selected Option 10\033[0m"<<endl;
+        }
+        else if(choice==11){
+                cout<<"\033[32m-▶>> You Selected Option 11\033[0m"<<endl;
         }
         else if(choice==13){
             cout<<"\033[32m-▶>> You Selected Option 13\033[0m"<<endl;
@@ -623,10 +682,10 @@ void searchStudents(Student students[],int noOfStudents){
         for(int i=0 ;i<noOfStudents;i++){
                 if(!students[i].personalInfo.fullName.compare(userInput) || !students[i].personalInfo.stdID.compare(userInput)){
                         viewRecords(students,noOfStudents,i);
-                }else{
-                    cout<<"Sorry No Record found with "<<userInput<<endl;
-                }               
+                        return;
+                }             
         }
+    cout<<"Sorry No Record found with "<<userInput<<endl;
 }
 //! Display Search records
 void viewRecords(Student students[],int noOfStds,int index){
@@ -667,4 +726,105 @@ void viewRecords(Student students[],int noOfStds,int index){
     cout<<"│\n";
     cout<<"╰───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
     cout<<"\n\n";
+}
+
+// ! Student Id index returner
+int studentID(Student students[],int size,string id){
+    for(int i=0 ;i<size;i++){
+                if(!students[i].personalInfo.stdID.compare(id)){
+                        return i;
+                }             
+        }
+    return -1;
+}
+//! Update Student Record ->5
+void updateRecordsMenu (){
+        cout<<"╭──────────────────────────────────────────────────────────────────\n";
+        cout<<"│\n";    
+        cout<<"│▶> [1]- Update Student Personal Information.\n";    
+        cout<<"│\n";    
+        cout<<"│▶> [2]- Update Student Contact Information.\n";    
+        cout<<"│\n";    
+        cout<<"│▶> [3]- Update Student Acedamics Information.\n";
+        cout<<"│ "<<endl;
+        cout<<"│\t\tselect any of the 3 options"<<endl;
+        cout<<"│ "<<endl;
+        cout<<"╰──────────────────────·······"<<endl;    
+}
+
+void updateRecord(Student students[],int noOfStudents){
+    string userID;
+    cout<<"Enter Student ID to update his record : ";
+    cin>>userID;
+    int index = studentID(students,noOfStudents,userID);
+    if(index != -1){
+        char choose='n';
+      do{
+        int choice;
+        updateRecordsMenu();
+        do{
+            cout<<"Enter your choice [1-3] : ";
+            cin>>choice;
+            if(!(choice>=1 && choice<=3)){
+                cout<<"Please Enter correct option 1-3 \033[0m\n";
+            }
+        }while(!(choice>=1 && choice<=3));
+
+        if(choice==1){
+            cout<<"\033[31m Updation Of Student Personal Information  for "<<students[index].personalInfo.stdID<<endl;
+            do{
+            cin.ignore();
+            cout<<"\tEnter Your Full Name (e.g Uzair Akram): ";
+            getline(cin,students[index].personalInfo.fullName);
+            if(!validateStudentName(students[index].personalInfo.fullName)){
+                beep();
+                cout<<"\033[31m Please Enter a correct name , name must be 4 characters long and does not include any digit or symbols !\033[0m\n";
+            }
+        }while(!validateStudentName(students[index].personalInfo.fullName));
+        do{
+            cout<<"Enter your Date of Birth format:dd/mm/yy : ";
+            cin>>students[index].personalInfo.dob;
+        }while(!validateDob(students[index].personalInfo.dob));
+        do{
+            cout<<"Gender ? (M/F/O)";
+            cin>>students[index].personalInfo.gender;
+            if(tolower(students[index].personalInfo.gender) !='m' && tolower(students[index].personalInfo.gender) !='f' && tolower(students[index].personalInfo.gender) !='o'){
+                beep();
+                cout<<"\033[31m Please Enter Correct Gender ! \033[0m\n";
+            }
+        }while(tolower(students[index].personalInfo.gender) !='m' && tolower(students[index].personalInfo.gender) !='f' && tolower(students[index].personalInfo.gender) !='o');
+        }
+        else if (choice ==2){
+            cout<<"\033[31m Updation Of Student Personal Information  for "<<students[index].personalInfo.stdID<<endl;
+            do{
+                cout<<"Enter Emergency Contact Number : ";
+                cin>>students[index].contactInfo.phoneNumber;
+            }while(!validatePhoneNumber(students[index].contactInfo.phoneNumber));
+            do{
+                cin.ignore();
+                cout<<"Enter your Email Address : ";
+                cin>>students[index].contactInfo.emailAddress;
+                if(!students[index].contactInfo.validateEmail()){
+                    beep();
+                    cout<<"\033[31mSorry! Please enter correct email address !\033[0m\n";
+                }
+            }while(!students[index].contactInfo.validateEmail());
+        }
+        else if (choice == 3){
+            cout<<"\033[31m Updation Of Student Personal Information  for "<<students[index].personalInfo.stdID<<endl;
+            do{
+            cout<<"Enter how many courses have you Enrolled In ! : ";
+            cin>>students[index].acedamicInfo.noOfcourses;
+            }while(students[index].acedamicInfo.noOfcourses<0 && students[index].acedamicInfo.noOfcourses>100);
+            students[index].acedamicInfo.getCoursesNames();
+            students[index].acedamicInfo.getCoursesTotalMarks();        
+            students[index].acedamicInfo.getCoursesObtainedMarks();
+            students[index].acedamicInfo.setCoursesGrades();
+        }
+            cout<<"Do You Want to update again ? (y/n)";
+            cin>>choose;
+      }while(tolower(choose) =='y');
+    }else{
+        cout<<"Sorry no Data was found with that ID \n";
+    }
 }
