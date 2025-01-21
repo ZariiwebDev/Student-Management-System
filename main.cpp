@@ -53,14 +53,13 @@ struct StudentAcedamicInformation{
     char* coursesGrades = new char[noOfcourses];
     void setCoursesGrades();
     char calcgrade(int);
+    char averageGrade;
 };
 struct Student{
     StudentPersonalInformation personalInfo;
     StudentContactInformation contactInfo;
     StudentAcedamicInformation acedamicInfo;
 };
-
-
 void addNewStudent(Student[],int&);
 string generateStudentID();
 bool validateStudentName(string studentName);
@@ -68,7 +67,7 @@ bool validateDob(string dob);
 bool validatePhoneNumber(string phoneNumber);
 
 //! VIEW RECORDS
-void viewRecords(Student[],int);
+void viewRecords(Student[],int,bool);
 void viewRecords(Student[],int,int);
 
 // ! SEARCH FOR A STUDENT
@@ -77,6 +76,8 @@ void searchStudents(Student[],int);
 void updateRecordsMenu(void);
 int studentID(Student[],int,string);        // --> returns the index of found id if not found return -1
 void updateRecord(Student[],int);
+// ! Calculating Average Grade
+void calcAverageGrade(Student[],int);
 //!                                 "MAIN SCOPE "
 int main() {
     bool res = loginMenu();
@@ -299,6 +300,7 @@ void mainMenuDisplay(){
        cout<<"╰──────────────···"<<endl;
 }
 void mainMenu(){
+    bool avrageGradeTrack=false;
     int trackNumberOfStudentsAdded=0;
     Student students[100];
     bool track=false;
@@ -323,10 +325,10 @@ void mainMenu(){
         else if(choice==2){
             if(track){
                 cout<<"\033[32m-▶>> You Selected Option 2\033[0m"<<endl;
-                viewRecords(students,trackNumberOfStudentsAdded);
+                viewRecords(students,trackNumberOfStudentsAdded,avrageGradeTrack);
             }else{
                 cout<<"\033[32m-▶>> You Selected Option 2\033[0m"<<endl;
-                cout<<"No records found please first add record !\n";
+                cout<<"\tNo records found please first add record !\n";
             }
         }
         else if(choice==3){
@@ -335,7 +337,7 @@ void mainMenu(){
                 searchStudents(students,trackNumberOfStudentsAdded);
             }else{
                 cout<<"\033[32m-▶>> You Selected Option 3\033[0m"<<endl;
-                cout<<"No records found please first add record !\n";
+                cout<<"\tNo records found please first add record !\n";
             }
         }
         else if(choice==4){
@@ -343,7 +345,7 @@ void mainMenu(){
                 cout<<"\033[32m-▶>> You Selected Option 4\033[0m"<<endl;
             }else{
                 cout<<"\033[32m-▶>> You Selected Option 4\033[0m"<<endl;
-                cout<<"No records found to delete please first add record !\n";
+                cout<<"\tNo records found to delete please first add record !\n";
             }
         }
         else if(choice==5){
@@ -352,15 +354,18 @@ void mainMenu(){
                 updateRecord(students,trackNumberOfStudentsAdded);
             }else{
                 cout<<"\033[32m-▶>> You Selected Option 5\033[0m"<<endl;
-                cout<<"No records found to update please first add record !\n";
+                cout<<"\tNo records found to update please first add record !\n";
             }
         }
         else if(choice==6){
             if(track){
+                avrageGradeTrack=true;
                 cout<<"\033[32m-▶>> You Selected Option 6\033[0m"<<endl;
+                calcAverageGrade(students,trackNumberOfStudentsAdded);
+                cout<<"\tAverage Grade has been calculated successfully ✅\n";
             }else{
                 cout<<"\033[32m-▶>> You Selected Option 6\033[0m"<<endl;
-                cout<<"No records found to Calculate Grades please first add record !\n";
+                cout<<"\tNo records found to Calculate Grades please first add record !\n";
             }
         }
         else if(choice==7){
@@ -593,6 +598,34 @@ char StudentAcedamicInformation::calcgrade(int index){
         return 'N';         // no grade
     }    
 }
+// ! Calculating average grade and assigns it to the avrageGraade
+void calcAverageGrade(Student students[],int noOfStds){
+    for(int k=0;k<noOfStds;k++){
+    int totalMarks=0,obtainedMarks=0;
+    for(int i=0;i<students[k].acedamicInfo.noOfcourses;i++){
+        totalMarks += students[k].acedamicInfo.coursesTotalMarks[i];
+        obtainedMarks += students[k].acedamicInfo.coursesObtainedMarks[i];
+    }
+    float percentage = (obtainedMarks/(float)totalMarks)*100.0;
+    if(percentage<33.0){
+        students[k].acedamicInfo.averageGrade ='F';
+    } 
+    else if(percentage>=33.0 && percentage<40.0){
+         students[k].acedamicInfo.averageGrade ='D';
+    }
+    else if(percentage>=40.0 && percentage<66.0){
+        students[k].acedamicInfo.averageGrade ='C';
+    }
+    else if(percentage>=66.0 && percentage<80.0){
+         students[k].acedamicInfo.averageGrade ='B';
+    }
+    else if(percentage>=80.0){
+        students[k].acedamicInfo.averageGrade ='A';
+    }else{
+         students[k].acedamicInfo.averageGrade ='N';         // no grade
+    }
+    }
+}
 //! generating student ID 
 string generateStudentID(){
     srand(time(0));
@@ -631,7 +664,7 @@ bool StudentContactInformation::validateEmail(){
 
     return find;
 }
-void viewRecords(Student students[],int noOfStds){
+void viewRecords(Student students[],int noOfStds,bool avgGrade){
     cout<<"\033[33m\t\tNUMBER OF STUDENTS FOUND "<<(noOfStds)<<"\033[0m\n";
     cout<<"╭───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
     cout<<"│\n";
@@ -664,6 +697,10 @@ void viewRecords(Student students[],int noOfStds){
     for(int j=0;j<students[i].acedamicInfo.noOfcourses;j++){
     cout<<"│\t\t\t\t│"<<fixed<<students[i].acedamicInfo.coursesNames[j]<<fixed<<setw(18)<<students[i].acedamicInfo.coursesTotalMarks[j]<<setw(28)<<students[i].acedamicInfo.coursesObtainedMarks[j]<<setw(18)<<students[i].acedamicInfo.coursesGrades[j]<<setw(6)<<fixed<<"│\n";
     }
+    if(avgGrade){
+    cout<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
+    cout<<"│\t\t\t\t│"<<fixed<<setw(35)<<"GRADE = "<<students[i].acedamicInfo.averageGrade<<setw(35)<<"│"<<endl;
+    }
     cout<<"│\t\t\t\t╰────────────────────────────────────────────────────────────────────╯\n";
     cout<<"│\n";
     cout<<"│\n";
@@ -676,11 +713,12 @@ void viewRecords(Student students[],int noOfStds){
 void searchStudents(Student students[],int noOfStudents){
         string userInput="";
         cout<<"Enter Student ID or Name To Search :";
-        cin>>userInput;
-
+        cin.ignore();
+        getline(cin,userInput);
         // ! Linear Search
         for(int i=0 ;i<noOfStudents;i++){
                 if(!students[i].personalInfo.fullName.compare(userInput) || !students[i].personalInfo.stdID.compare(userInput)){
+                        cout<<"\t\t\033[33m\t\t SEARCH RESULTS BY "<<userInput<<"\033[0m\n";
                         viewRecords(students,noOfStudents,i);
                         return;
                 }             
@@ -689,7 +727,6 @@ void searchStudents(Student students[],int noOfStudents){
 }
 //! Display Search records
 void viewRecords(Student students[],int noOfStds,int index){
-    cout<<"\033[33m\t\t STUDENT FOUND "<<"\033[0m\n";
     cout<<"╭───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
     cout<<"│\n";
     cout<<"│-▶>> \033[32mStudent ID: \033[31m"<<students[index].personalInfo.stdID<<"\033[0m\n";
@@ -771,7 +808,7 @@ void updateRecord(Student students[],int noOfStudents){
         }while(!(choice>=1 && choice<=3));
 
         if(choice==1){
-            cout<<"\033[31m Updation Of Student Personal Information  for "<<students[index].personalInfo.stdID<<endl;
+            cout<<"\033[31m Updation Of Student Personal Information  for "<<students[index].personalInfo.stdID<<"\033[0m"<<endl;
             do{
             cin.ignore();
             cout<<"\tEnter Your Full Name (e.g Uzair Akram): ";
@@ -795,7 +832,7 @@ void updateRecord(Student students[],int noOfStudents){
         }while(tolower(students[index].personalInfo.gender) !='m' && tolower(students[index].personalInfo.gender) !='f' && tolower(students[index].personalInfo.gender) !='o');
         }
         else if (choice ==2){
-            cout<<"\033[31m Updation Of Student Personal Information  for "<<students[index].personalInfo.stdID<<endl;
+            cout<<"\033[31m Updation Of Student Contact Information  for "<<students[index].personalInfo.stdID<<"\033[0m"<<endl;
             do{
                 cout<<"Enter Emergency Contact Number : ";
                 cin>>students[index].contactInfo.phoneNumber;
@@ -811,7 +848,7 @@ void updateRecord(Student students[],int noOfStudents){
             }while(!students[index].contactInfo.validateEmail());
         }
         else if (choice == 3){
-            cout<<"\033[31m Updation Of Student Personal Information  for "<<students[index].personalInfo.stdID<<endl;
+            cout<<"\033[31m Updation Of Student Acedamics Information  for "<<students[index].personalInfo.stdID<<"\033[0m"<<endl;
             do{
             cout<<"Enter how many courses have you Enrolled In ! : ";
             cin>>students[index].acedamicInfo.noOfcourses;
