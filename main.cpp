@@ -82,6 +82,8 @@ void sortData(Student[],int);
 // ! SAVE AND LOAD RECORDS FROM FILE
 bool saveRecords(Student[],int,bool);
 bool loadRecords();
+// ! GRADE ANALYSIS
+void gradeAnalysis(Student[],int);
 //!                                 "MAIN SCOPE "
 int main() {
     bool res = loginMenu();
@@ -389,9 +391,13 @@ void mainMenu(){
         else if(choice==9){
             if(track){
                 cout<<"\033[32m-▶>> You Selected Option 9\033[0m"<<endl;
+                avrageGradeTrack=true;
+                calcAverageGrade(students,trackNumberOfStudentsAdded);
+                gradeAnalysis(students,trackNumberOfStudentsAdded);
+                 
             }else{
                 cout<<"\033[32m-▶>> You Selected Option 9\033[0m"<<endl;
-                cout<<"No records found to Calculate Grades please first add record !\n";
+                cout<<"No records found to Analyze Grades ,please first add record !\n";
             }
         }
         else if(choice==10){
@@ -915,6 +921,19 @@ void sortData(Student students[],int size){
     }
 }
 
+// ! Grade Analysis [9]
+void gradeAnalysis(Student students[],int noOfStds){
+    for(int i=0; i<noOfStds; i++){
+        if(students[i].acedamicInfo.averageGrade =='A') {
+            cout<<"\033[34m GRADE : A\033[0m"<<endl;      
+            viewRecords(students,noOfStds,i);
+        }
+        else if (students[i].acedamicInfo.averageGrade =='F'){
+            cout<<"\033[34m GRADE : F\033[0m"<<endl;      
+            viewRecords(students,noOfStds,i);       
+        }
+    }
+}
 // ! Saving record in a file
 bool saveRecords(Student students[],int noOfStds,bool avgGrade){
     fstream file("./records/studentsRecord.txt",ios::out);
@@ -978,5 +997,6 @@ bool loadRecords(){
     while(getline(file,line)){
         cout<<line<<endl;
     }
+        return true;
     }
 }
