@@ -4,7 +4,6 @@
 #include"windows.h"
 #include"iomanip"
 #include"fstream"
-#include"time.h"
 #include"math.h"
 #include"ctime"
 using namespace std;
@@ -78,6 +77,11 @@ int studentID(Student[],int,string);        // --> returns the index of found id
 void updateRecord(Student[],int);
 // ! Calculating Average Grade
 void calcAverageGrade(Student[],int);
+// ! Sorting student data
+void sortData(Student[],int);
+// ! SAVE AND LOAD RECORDS FROM FILE
+bool saveRecords(Student[],int,bool);
+bool loadRecords();
 //!                                 "MAIN SCOPE "
 int main() {
     bool res = loginMenu();
@@ -253,11 +257,6 @@ bool loginMenu(){
     }
     return 1;
 }
-void displayCurrentDatenTime(){
-     time_t now = time(0);
-     char* dnt = ctime(&now);
-     cout<<dnt<<endl;
-}
 void currentLoginStatus(){
      cout<<"\n Current Status: \033[32mLOGGED IN\033[0m"<<endl;
      cout<<" Current UserID: \033[32m"<<currentLoginIDFetch()<<"\033[0m"<<endl;
@@ -300,6 +299,7 @@ void mainMenuDisplay(){
        cout<<"╰──────────────···"<<endl;
 }
 void mainMenu(){
+    bool trackFileSaved=false;
     bool avrageGradeTrack=false;
     int trackNumberOfStudentsAdded=0;
     Student students[100];
@@ -371,6 +371,8 @@ void mainMenu(){
         else if(choice==7){
             if(track){
                 cout<<"\033[32m-▶>> You Selected Option 7\033[0m"<<endl;
+                sortData(students,trackNumberOfStudentsAdded);
+                cout<<"\n Data successfully sorted ✅\n";
             }else{
                 cout<<"\033[32m-▶>> You Selected Option 7\033[0m"<<endl;
                 cout<<"No records found to sort please first add record !\n";
@@ -393,15 +395,26 @@ void mainMenu(){
             }
         }
         else if(choice==10){
-                cout<<"\033[32m-▶>> You Selected Option 10\033[0m"<<endl;
+                if(track){
+                    cout<<"\033[32m-▶>> You Selected Option 10\033[0m"<<endl;
+                    trackFileSaved = saveRecords(students,trackNumberOfStudentsAdded,avrageGradeTrack);
+                    if(trackFileSaved){
+                        cout<<"Data has been successfully saved !\n";
+                    }else{
+                        cout<<"Error While Saving Try later ..!\n";
+                    }
+                }else{
+                    cout<<"\033[32m-▶>> You Selected Option 10\033[0m"<<endl;
+                    cout<<"No records found to Save please add record first!\n";
+                }
         }
         else if(choice==11){
-                cout<<"\033[32m-▶>> You Selected Option 11\033[0m"<<endl;
+            cout<<"\033[32m-▶>> You Selected Option 11\033[0m"<<endl;
+            loadRecords();
         }
         else if(choice==13){
             cout<<"\033[32m-▶>> You Selected Option 13\033[0m"<<endl;
             loginMenu();
-            break;
         }
         else if (choice==14){
             cout<<"\033[32m-▶>> You Selected Option 14\033[0m"<<endl;
@@ -411,7 +424,7 @@ void mainMenu(){
         cout<<"Do you want to continue ? (y/n) : ";
         cin>>choiceMenu;
         if(tolower(choiceMenu) != 'y'){
-            cout<<"GoodeBye ....\n";
+            cout<<"Thanks ! GoodBye "<<endl;
             break;
         }
     }while(tolower(choiceMenu) == 'y');
@@ -863,5 +876,107 @@ void updateRecord(Student students[],int noOfStudents){
       }while(tolower(choose) =='y');
     }else{
         cout<<"Sorry no Data was found with that ID \n";
+    }
+}
+
+
+// ! sorting data by name/ID
+void sortData(Student students[],int size){
+    int choice;
+    do{
+     cout<<"▶> [1]- Sort by Name \n";
+     cout<<"▶> [2]- Sort by ID \n";
+     cout<<"Enter Your Choice [1-2] : ";
+     cin>>choice;
+    }while(choice!=1 && choice!=2);
+    switch(choice){
+        case 1:
+                for(int i=0;i<size;i++){
+                    for(int j=0;j<(size-i-1);j++){
+                        if(students[j].personalInfo.fullName>students[j+1].personalInfo.fullName){
+                            Student temp = students[j];
+                            students[j] = students[j+1];
+                            students[j+1] = temp;
+                        }
+                    }
+                }
+                break;
+        case 2:
+                for(int i=0;i<size;i++){
+                    for(int j=0;j<(size-i-1);j++){
+                        if(students[j].personalInfo.stdID > students[j+1].personalInfo.stdID){
+                                Student temp = students[j];
+                                students[j] = students[j+1];
+                                students[j+1] = temp;
+                        }
+                    }
+                }
+                break;
+    }
+}
+
+// ! Saving record in a file
+bool saveRecords(Student students[],int noOfStds,bool avgGrade){
+    fstream file("./records/studentsRecord.txt",ios::out);
+    if(!file){
+        file.close();
+        return false;
+    }
+    else{
+    file<<"╭───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
+    file<<"│\n";
+    for(int i=0;i<noOfStds;i++){
+    file<<"│-▶>> Student ID: "<<students[i].personalInfo.stdID<<"\n";
+    file<<"│\n";
+    file<<"│\tPERSONAL INFORMATION \n";
+    file<<"│\n";
+    file<<"│\t\tFull Name: "<<students[i].personalInfo.fullName<<"\n";
+    file<<"│\n";
+    file<<"│\t\tDOB: "<<students[i].personalInfo.dob<<"\n";
+    file<<"│\n";
+    file<<"│\t\tGender: "<<students[i].personalInfo.gender<<"\n";
+    file<<"│\n";
+    file<<"│\t\tStudent ID: "<<students[i].personalInfo.stdID<<"\n";
+    file<<"│\n";
+    file<<"│\tCONTACT INFORMATION \n";
+    file<<"│\n";
+    file<<"│\t\tPhone Number: "<<students[i].contactInfo.phoneNumber<<"\n";
+    file<<"│\n";
+    file<<"│\t\tEmail: "<<students[i].contactInfo.emailAddress<<"\n";
+    file<<"│\n";
+    file<<"│\tACEDAMICS INFORMATION \n";
+    file<<"│\n";
+    file<<"│\t\tCourses Enrolled: "<<students[i].acedamicInfo.noOfcourses<<"\n";
+    file<<"│\n";
+    file<<"│\t\t\t\t╭────────────────────────────────────────────────────────────────────╮\n";
+    file<<"│\t\t\t\t│NAMES"<<"\t\t"<<"TOTAL MARKS"<<"\t\t"<<"OBTAINED MARKS"<<"\t\t"<<"GRADE""│"<<"\n";
+    file<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
+    for(int j=0;j<students[i].acedamicInfo.noOfcourses;j++){
+    file<<"│\t\t\t\t│"<<fixed<<students[i].acedamicInfo.coursesNames[j]<<fixed<<setw(18)<<students[i].acedamicInfo.coursesTotalMarks[j]<<setw(28)<<students[i].acedamicInfo.coursesObtainedMarks[j]<<setw(18)<<students[i].acedamicInfo.coursesGrades[j]<<setw(6)<<fixed<<"│\n";
+    }
+    if(avgGrade){
+    file<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
+    file<<"│\t\t\t\t│"<<fixed<<setw(35)<<"GRADE = "<<students[i].acedamicInfo.averageGrade<<setw(35)<<"│"<<endl;
+    }
+    file<<"│\t\t\t\t╰────────────────────────────────────────────────────────────────────╯\n";
+    file<<"│\n";
+    file<<"│\n";
+    }
+    file<<"│\n";
+    file<<"╰───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
+        
+        return true;
+    }
+}
+bool loadRecords(){
+    string line;
+    fstream file("./records/studentsRecord.txt",ios::in);
+    if(!file){
+        return false;
+    }
+    else{
+    while(getline(file,line)){
+        cout<<line<<endl;
+    }
     }
 }
