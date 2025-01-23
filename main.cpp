@@ -1,4 +1,4 @@
-#include <iostream>
+#include "iostream"
 #include"string"
 #include"cctype"
 #include"windows.h"
@@ -19,7 +19,6 @@ void loginID(void);
 string generatingLoginID(void);
 bool validID(string);
 string currentLoginIDFetch(void);
-void displayCurrentDatenTime(void);
 void currentLoginStatus(void);
 
 //! MAIN MENU PROTOTYPES
@@ -53,6 +52,14 @@ struct StudentAcedamicInformation{
     void setCoursesGrades();
     char calcgrade(int);
     char averageGrade;
+
+    // destructring to free allocated memory (deallocate)
+    ~StudentAcedamicInformation(){
+        delete[] coursesNames;
+        delete[] coursesGrades;
+        delete[] coursesTotalMarks;
+        delete[] coursesObtainedMarks;
+    }
 };
 struct Student{
     StudentPersonalInformation personalInfo;
@@ -114,6 +121,7 @@ bool validID(string id){
     }
     return true;
 }
+// generating login id for user
 string generatingLoginID(){
     cout<<"\tgenerating..."<<endl;
     srand(time(0));
@@ -151,7 +159,7 @@ void loginID(){
     fstream file("./LoginID/ID.txt",ios::out);
     if(!file){
         beep();
-        cerr<<"Sorry we have some issues wile saving your ID \n";
+        cout<<"Sorry we have some issues wile saving your ID \n";
     }else{
         file<<id;
         cout<<"\033[0mWe Successfully ✅ saved your Login Id you can use it later for login !\033[0m"<<endl;
@@ -206,6 +214,7 @@ bool loginMenu(){
             cout<<"File Does not opened !"<<endl;
             errorStatus=true;
         }
+        // reading id from file 
         file>>id;
         if(validID(id)){
             if(id.length()>0){
@@ -217,7 +226,7 @@ bool loginMenu(){
             errorStatus=true;
         }
         }else{
-            cerr<<"Sorry File is corrupted ! it has not a valid ID Check it ! "; ///** */
+            cout<<"Sorry File is corrupted ! it has not a valid ID Check it ! "; ///** */
             errorStatus=true;
         }
             file.close();
@@ -298,7 +307,7 @@ void mainMenuDisplay(){
        cout<<"│ ▶> [14] Exit System"<<endl;
        cout<<"│ "<<endl;
        cout<<"│\t\tselect any of these 14 options"<<endl;
-       cout<<"╰──────────────···"<<endl;
+       cout<<"╰────────────────────────────────···"<<endl;
 }
 void mainMenu(){
     bool trackFileSaved=false;
@@ -1000,3 +1009,4 @@ bool loadRecords(){
         return true;
     }
 }
+
