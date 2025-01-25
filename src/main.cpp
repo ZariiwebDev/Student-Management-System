@@ -89,6 +89,8 @@ void sortData(Student[],int);
 // ! SAVE AND LOAD RECORDS FROM FILE
 bool saveRecords(Student[],int,bool);
 bool loadRecords();
+// ! Display Top Performers
+void displayTopPerformers(Student[],int);
 // ! GRADE ANALYSIS
 void gradeAnalysis(Student[],int);
 //!                                 "MAIN SCOPE "
@@ -392,9 +394,10 @@ void mainMenu(){
         else if(choice==8){
             if(track){
                 cout<<"\033[32m-▶>> You Selected Option 8\033[0m"<<endl;
+                displayTopPerformers(students,trackNumberOfStudentsAdded);
             }else{
                 cout<<"\033[32m-▶>> You Selected Option 8\033[0m"<<endl;
-                cout<<"No records found to Calculate Grades please first add record !\n";
+                cout<<"No records found to display Top Performers,please first add record !\n";
             }
         }
         else if(choice==9){
@@ -425,7 +428,10 @@ void mainMenu(){
         }
         else if(choice==11){
             cout<<"\033[32m-▶>> You Selected Option 11\033[0m"<<endl;
-            loadRecords();
+            bool res = loadRecords();
+            if(!res){
+                cout<<"No records Found !\n";
+            }
         }
         else if(choice==13){
             cout<<"\033[32m-▶>> You Selected Option 13\033[0m"<<endl;
@@ -455,7 +461,7 @@ void addNewStudent(Student students[],int& trackNumberOfStudentsAdded){
         cout<<"\033[34m\t\t PERSONAL INFORMATION :\033[0m\n";
         do{
             cin.ignore();
-            cout<<"\tEnter Your Full Name (e.g Uzair Akram): ";
+            cout<<"Enter Your Full Name (e.g Uzair Akram): ";
             getline(cin,students[i].personalInfo.fullName);
             if(!validateStudentName(students[i].personalInfo.fullName)){
                 beep();
@@ -479,9 +485,9 @@ void addNewStudent(Student students[],int& trackNumberOfStudentsAdded){
         if(students[i].personalInfo.validateID(students[i].personalInfo.stdID)){
                 cout<<"Student ID assigned : \033[34m"<<students[i].personalInfo.stdID<<"\033[0m"<<endl;
         }
+        cout<<"\033[34m\t\t CONTACT INFORMATION :\033[0m\n";
         do{
         cin.ignore();
-        cout<<"\033[34m\t\t CONTACT INFORMATION :\033[0m\n";
         cout<<"Enter Emergency Contact Number : ";
         cin>>students[i].contactInfo.phoneNumber;
         }while(!validatePhoneNumber(students[i].contactInfo.phoneNumber));
@@ -929,7 +935,22 @@ void sortData(Student students[],int size){
                 break;
     }
 }
-
+// ! Display Top Performers [8]
+void displayTopPerformers(Student students[],int noOfStds){
+        //! Sorting students by grades to obtain top performers
+        for(int i=0;i<noOfStds;i++){
+            if(students[i].acedamicInfo.averageGrade > students[i].acedamicInfo.averageGrade){
+                                Student temp = students[i];
+                                students[i] = students[i+1];
+                                students[i+1] = temp;
+            }
+        }  
+        // we are displaying first 5 top performers
+        cout<<"Top Performers : \n"; 
+        for(int i=0;i<5;i++){
+            viewRecords(students,noOfStds,i);
+        }
+}
 // ! Grade Analysis [9]
 void gradeAnalysis(Student students[],int noOfStds){
     for(int i=0; i<noOfStds; i++){
@@ -1000,11 +1021,25 @@ bool loadRecords(){
     string line;
     fstream file("./records/studentsRecord.txt",ios::in);
     if(!file){
+        cout<<"Sorry No records Found Please first save Record !\n";
         return false;
     }
     else{
     while(getline(file,line)){
-        cout<<line<<endl;
+        bool check=false;
+        if(line.length() !=0){
+            for(char ch : line){
+                if(!isspace(ch)){
+                    check=true;
+                    break;
+                }
+            }
+            if(check){
+                cout<<line<<endl;
+            }else{
+                return false;
+            }
+        }
     }
         return true;
     }
