@@ -461,7 +461,7 @@ void addNewStudent(Student students[],int& trackNumberOfStudentsAdded){
         cout<<"\033[34m\t\t PERSONAL INFORMATION :\033[0m\n";
         do{
             cin.ignore();
-            cout<<"Enter Your Full Name (e.g Uzair Akram): ";
+            cout<<"Enter Your Full Name : ";
             getline(cin,students[i].personalInfo.fullName);
             if(!validateStudentName(students[i].personalInfo.fullName)){
                 beep();
@@ -939,16 +939,22 @@ void sortData(Student students[],int size){
 void displayTopPerformers(Student students[],int noOfStds){
         //! Sorting students by grades to obtain top performers
         for(int i=0;i<noOfStds;i++){
-            if(students[i].acedamicInfo.averageGrade > students[i].acedamicInfo.averageGrade){
-                                Student temp = students[i];
-                                students[i] = students[i+1];
-                                students[i+1] = temp;
+            for(int j=0;j<(noOfStds-i-1);j++){
+            if(students[j].acedamicInfo.averageGrade > students[j+1].acedamicInfo.averageGrade){
+                                Student temp = students[j];
+                                students[j] = students[j+1];
+                                students[j+1] = temp;
+            }
             }
         }  
-        // we are displaying first 5 top performers
+        // we are displaying  top performers
+        int noOfTopPerforms=5;
         cout<<"Top Performers : \n"; 
-        for(int i=0;i<5;i++){
-            viewRecords(students,noOfStds,i);
+        if(noOfStds<5){
+            noOfTopPerforms=noOfStds;
+        }
+        for(int i=0;i<noOfTopPerforms;i++){
+            viewRecords(students,noOfTopPerforms,i);
         }
 }
 // ! Grade Analysis [9]
