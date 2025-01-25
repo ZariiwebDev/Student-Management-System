@@ -75,7 +75,8 @@ bool validatePhoneNumber(string phoneNumber);
 //! VIEW RECORDS
 void viewRecords(Student[],int,bool);
 void viewRecords(Student[],int,int);
-
+// ! Delete Students
+void deleteStudent(Student[],int&);
 // ! SEARCH FOR A STUDENT
 void searchStudents(Student[],int);
 // ! Update student record by ID
@@ -356,6 +357,7 @@ void mainMenu(){
         else if(choice==4){
              if(track){
                 cout<<"\033[32m-▶>> You Selected Option 4\033[0m"<<endl;
+                deleteStudent(students,trackNumberOfStudentsAdded);
             }else{
                 cout<<"\033[32m-▶>> You Selected Option 4\033[0m"<<endl;
                 cout<<"\tNo records found to delete please first add record !\n";
@@ -699,6 +701,7 @@ bool StudentContactInformation::validateEmail(){
     return find;
 }
 void viewRecords(Student students[],int noOfStds,bool avgGrade){
+    if(noOfStds>0){
     cout<<"\033[33m\t\tNUMBER OF STUDENTS FOUND "<<(noOfStds)<<"\033[0m\n";
     cout<<"╭───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
     cout<<"│\n";
@@ -741,6 +744,9 @@ void viewRecords(Student students[],int noOfStds,bool avgGrade){
     }
     cout<<"│\n";
     cout<<"╰───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
+    }else{
+        cout<<"No Students Found to Display !\n";
+    }
 }
 
 // !    Serach for Students -> 3
@@ -759,8 +765,38 @@ void searchStudents(Student students[],int noOfStudents){
         }
     cout<<"Sorry No Record found with "<<userInput<<endl;
 }
+// ! Delete Students Records
+void deleteStudent(Student students[],int &noOfStds){
+        char choice = 'n';
+        bool userStatus=false;
+        string userInput;
+        do{
+            int index=-1;
+            cout<<"Enter Student ID : ";
+            cin>>userInput;
+            for(int i=0;i<noOfStds;i++){
+                    if( !userInput.compare(students[i].personalInfo.stdID)){
+                            userStatus=true;
+                            index = i;
+                            break;
+                    }
+            }
+            if(userStatus && index !=-1){
+                    for(int i = index;i<(noOfStds-1);i++){
+                            students[i] = students[i+1];
+                    }
+                    noOfStds--;
+                    cout<<"Student Successfully Deleted !\n";
+            }else{
+                cout<<"No User Found With ID: "<<userInput<<"\n";
+            }
+            cout<<"Do you want to delete more Students (y/n) : ";
+            cin>>choice;
+        }while(choice=='y' || choice=='Y');
+}
 //! Display Search records
 void viewRecords(Student students[],int noOfStds,int index){
+    if(noOfStds>0){
     cout<<"╭───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
     cout<<"│\n";
     cout<<"│-▶>> \033[32mStudent ID: \033[31m"<<students[index].personalInfo.stdID<<"\033[0m\n";
@@ -797,8 +833,10 @@ void viewRecords(Student students[],int noOfStds,int index){
     cout<<"│\n";
     cout<<"╰───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
     cout<<"\n\n";
+    }else{
+        cout<<"No Students Found to Display !\n";
+    }
 }
-
 // ! Student Id index returner
 int studentID(Student students[],int size,string id){
     for(int i=0 ;i<size;i++){
