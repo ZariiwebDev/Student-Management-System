@@ -52,8 +52,10 @@ struct StudentAcedamicInformation{
     void setCoursesGrades();
     char calcgrade(int);
     char averageGrade;
-
-    // destructring to free allocated memory (deallocate)
+    /**
+     * The function `~StudentAcedamicInformation()` is a destructor that deallocates memory for arrays
+     * storing information about courses.
+     */
     ~StudentAcedamicInformation(){
         delete[] coursesNames;
         delete[] coursesGrades;
@@ -97,6 +99,10 @@ void gradeAnalysis(Student[],int);
 // ! Attandance tracking
 void attendanceTrack(Student[],int);
 //!                                 "MAIN SCOPE "
+/**
+ * The main function calls the loginMenu function and then the mainMenu function if the login is
+ * successful.
+ */
 int main() {
     bool res = loginMenu();
     if(res){
@@ -105,6 +111,9 @@ int main() {
     return 0;
 }
 // !                                " LOGIN MENU CODE "
+/**
+ * `displayHeader` prints a stylized header using ASCII art.
+ */
 void displayHeader(){
     cout<<"\n\n\n";
     cout<<"░█▀▀▀█ ▀▀█▀▀ ░█─░█ ░█▀▀▄ ░█▀▀▀ ░█▄─░█ ▀▀█▀▀ 　 ░█▀▄▀█ ─█▀▀█ ░█▄─░█ ─█▀▀█ ░█▀▀█ ░█▀▀▀ ░█▀▄▀█ ░█▀▀▀ ░█▄─░█ ▀▀█▀▀ 　 ░█▀▀▀█ ░█──░█ ░█▀▀▀█ ▀▀█▀▀ ░█▀▀▀ ░█▀▄▀█\n";
@@ -112,7 +121,16 @@ void displayHeader(){
     cout<<"░█▄▄▄█ ─░█── ─▀▄▄▀ ░█▄▄▀ ░█▄▄▄ ░█──▀█ ─░█── 　 ░█──░█ ░█─░█ ░█──▀█ ░█─░█ ░█▄▄█ ░█▄▄▄ ░█──░█ ░█▄▄▄ ░█──▀█ ─░█── 　 ░█▄▄▄█ ──░█── ░█▄▄▄█ ─░█── ░█▄▄▄ ░█──░█\n";
     cout<<"\n\n\n";
 }
-//! it validates login ID and return 0 in false case else return 1
+/**
+ * The function `validID` checks if a given string is a valid login ID by ensuring it is 8 characters
+ * long and contains only uppercase letters and digits.
+ * 
+ * @param id The `validID` function checks if a given ID is valid based on the following criteria:
+ * 
+ * @return The function `validID` returns a boolean value. It returns `true` if the input `id` is a
+ * valid login ID according to the specified criteria (8 characters in length and containing only
+ * uppercase letters and digits), and `false` otherwise.
+ */
 bool validID(string id){
     //! valid login must have 8 characters in length and does not contain other alphabets other tha 1-9 and A-Z
     if(id.length() == 8){
@@ -126,7 +144,14 @@ bool validID(string id){
     }
     return true;
 }
-// generating login id 
+/**
+ * The function "generatingLoginID" generates a random login ID consisting of digits and uppercase
+ * alphabets.
+ * 
+ * @return The function `generatingLoginID` is returning a randomly generated login ID consisting of a
+ * combination of digits and uppercase alphabets. The login ID is 8 characters long, with alternating
+ * characters of a random digit from 0-9 and a random uppercase alphabet from A-Z.
+ */
 string generatingLoginID(){
     cout<<"\tgenerating..."<<endl;
     srand(time(0));
@@ -144,6 +169,14 @@ string generatingLoginID(){
     }
     return loginId;
 }
+/**
+ * The function `currentLoginIDFetch` reads the current login ID from a file and returns it if it is
+ * valid.
+ * 
+ * @return The function `currentLoginIDFetch` is returning a string value. The string value being
+ * returned is either the `id` read from the file "./LoginID/ID.txt" if it passes the `validID` check,
+ * or an empty string if the `id` is not valid.
+ */
 string currentLoginIDFetch(){
     string id="";
     fstream file("./LoginID/ID.txt",ios::in);
@@ -154,7 +187,11 @@ string currentLoginIDFetch(){
     file>>id;
     return validID(id) ? id : "";
 }
-// @attention  displays the id to the user
+/**
+ * The function generates a unique login ID, validates it, saves it to a file, and provides feedback to
+ * the user.
+ *  @attention  displays the id to the user
+ */
 void loginID(){
     string id =generatingLoginID();
     while(!validID(id)){
@@ -171,6 +208,10 @@ void loginID(){
     }
     file.close();
 }
+/**
+ * The function `loginMenuDisplay` displays a menu for users to either login, sign up, or exit with a
+ * limited number of attempts (3).
+ */
 void loginMenuDisplay(){
     displayHeader();
     cout<<"\n";
@@ -185,6 +226,13 @@ void loginMenuDisplay(){
     cout<<"│\tselect any of three options,you have only 3 attempts"<<endl;
     cout<<"╰──────────────···"<<endl;
 }
+/**
+ * The function `loginMenu` displays a login menu, handles user input validation, and allows users to
+ * login, generate a new ID, or exit the system based on their choice.
+ * 
+ * @return The function `loginMenu()` returns a boolean value - `true` if the login process is
+ * successful and `false` if it is not successful or if the user chooses to exit the system.
+ */
 bool loginMenu(){
     loginMenuDisplay();
     int choice,chances=3;
@@ -273,6 +321,9 @@ bool loginMenu(){
     }
     return 1;
 }
+/**
+ * The function `currentLoginStatus` displays the current login status and user ID in green color.
+ */
 void currentLoginStatus(){
      cout<<"\n Current Status: \033[32mLOGGED IN\033[0m"<<endl;
      cout<<" Current UserID: \033[32m"<<currentLoginIDFetch()<<"\033[0m"<<endl;
@@ -314,6 +365,10 @@ void mainMenuDisplay(){
        cout<<"│\t\tselect any of these 14 options"<<endl;
        cout<<"╰────────────────────────────────···"<<endl;
 }
+/**
+ * The mainMenu function in C++ displays a menu for managing student records and performs various
+ * operations based on user input.
+ */
 void mainMenu(){
     bool trackFileSaved=false;
     bool avrageGradeTrack=false;
@@ -461,8 +516,18 @@ void mainMenu(){
     }while(tolower(choiceMenu) == 'y');
 
 }
-
-//!     adding new student Record
+/**
+ * The function `addNewStudent` allows the user to input information for a specified number of students
+ * and saves the data for each student in an array.
+ * 
+ * @param students The `students` parameter is an array of `Student` objects. It is used to store
+ * information about multiple students, such as their personal information, contact information, and
+ * academic information.
+ * @param trackNumberOfStudentsAdded The `trackNumberOfStudentsAdded` parameter is a reference to an
+ * integer variable that keeps track of the number of students to be added. This variable is passed by
+ * reference to the `addNewStudent` function so that the function can update its value based on user
+ * input. This way, the function can
+ */
 void addNewStudent(Student students[],int& trackNumberOfStudentsAdded){
     cout<<"How many students to add ? ";
     cin>>trackNumberOfStudentsAdded;
@@ -524,6 +589,19 @@ void addNewStudent(Student students[],int& trackNumberOfStudentsAdded){
 }
 
 //! Validating Student Name
+/**
+ * The function `validateStudentName` checks if a given string contains only alphabetic characters and
+ * spaces.
+ * 
+ * @param studentName The `validateStudentName` function is designed to validate a student's name. It
+ * checks if the length of the student name is at least 1 character and then iterates through each
+ * character in the name. If any character is not an alphabet letter or a space, the function returns
+ * false indicating that
+ * 
+ * @return The function `validateStudentName` returns a boolean value. It returns `true` if the
+ * `studentName` meets the validation criteria (contains only alphabetic characters and spaces, and has
+ * a length of at least 1), and `false` otherwise.
+ */
 bool validateStudentName(string studentName){
     if(studentName.length()>=1){
         for(char ch : studentName){
@@ -537,6 +615,18 @@ bool validateStudentName(string studentName){
     return false;
 }
 //! Validating Dob
+/**
+ * The function `validateDob` checks if a given date of birth string is in the format "dd/mm/yy" and
+ * validates the day and month values.
+ * 
+ * @param dob The function `validateDob` takes a string `dob` as input, which represents a date of
+ * birth in the format "dd/mm/yy". The function parses this input string to extract the day, month, and
+ * year components. It then validates whether the day is within 1-31
+ * 
+ * @return The function `validateDob` returns a boolean value - `true` if the date of birth (dob)
+ * provided is in the format "dd/mm/yy" and the date and month values are within the valid ranges (1-31
+ * for date and 1-12 for month), otherwise it returns `false`.
+ */
 bool validateDob(string dob){
     bool slash = true;
     string date="";
@@ -573,6 +663,17 @@ bool validateDob(string dob){
     }
 }
 // ! Validating phone Number
+/**
+ * The function `validatePhoneNumber` checks if a phone number is valid by ensuring it does not start
+ * with a plus sign and contains only digits.
+ * 
+ * @param phoneNumber The function `validatePhoneNumber` takes a string `phoneNumber` as input and
+ * checks if it is a valid phone number. It returns `true` if the phone number consists only of digits
+ * and does not start with a '+', otherwise it returns `false`.
+ * 
+ * @return The function `validatePhoneNumber` returns a boolean value - `true` if the phone number is
+ * valid (contains only digits and does not start with '+'), and `false` otherwise.
+ */
 bool validatePhoneNumber(string phoneNumber){
     if(phoneNumber[0]=='+'){
         cout<<"\033[31m Please Enter number without + \033[0m\n";
@@ -671,6 +772,11 @@ void calcAverageGrade(Student students[],int noOfStds){
     }
 }
 //! generating student ID 
+/**
+ * The function generates a random 4-digit student ID using numbers 0-9.
+ * 
+ * @return A randomly generated student ID consisting of 4 digits.
+ */
 string generateStudentID(){
     srand(time(0));
     string ID="";
@@ -757,7 +863,25 @@ void viewRecords(Student students[],int noOfStds,bool avgGrade){
     }
 }
 
-// !    Serach for Students -> 3
+/**
+ * The function `searchStudents` in C++ performs a linear search on an array of `Student` objects based
+ * on user input of student ID or name and displays search results or a message if no record is found.
+ *
+ * @param students The `students` parameter is an array of `Student` objects. Each `Student` object
+ * likely contains information about a student, such as their personal information like full name and
+ * student ID. The function `searchStudents` takes this array of `Student` objects and the number of
+ * students (`noOf
+ * @param noOfStudents The `noOfStudents` parameter in the `searchStudents` function represents the
+ * total number of students in the `students` array that you are searching through. This parameter is
+ * used to determine the range of the loop for searching the students' information based on the user
+ * input.
+ * 
+ * @return The `searchStudents` function is designed to search for a student in an array of `Student`
+ * objects based on the input provided by the user (either student ID or name). If a matching student
+ * is found, the function will display the search results by calling the `viewRecords` function and
+ * then return. If no matching student is found, it will display a message indicating that no record
+ * was found
+ */
 void searchStudents(Student students[],int noOfStudents){
         string userInput="";
         cout<<"Enter Student ID or Name To Search :";
@@ -951,6 +1075,17 @@ void updateRecord(Student students[],int noOfStudents){
 
 
 // ! sorting data by name/ID
+/**
+ * The function `sortData` sorts an array of `Student` objects either by name or by ID based on user
+ * input.
+ * 
+ * @param students The `students` parameter is an array of `Student` Structure, and the `size` parameter
+ * indicates the number of elements in the array. The function `sortData` sorts the array of `Student`
+ * Structure based on the user's choice of sorting criteria - either by name or by ID.
+ * @param size The `size` parameter in the `sortData` function represents the number of elements in the
+ * `students` array that needs to be sorted. It indicates the total number of `Student` objects in the
+ * array that require sorting based on the user's choice of sorting criteria (either by name or by
+ */
 void sortData(Student students[],int size){
     int choice;
     do{
@@ -1099,6 +1234,7 @@ bool loadRecords(){
         return true;
     }
 }
+// done by anjum
 
 void attendanceTrack(Student students[],int noOfStds){
     char attandance[noOfStds]={'0'};
