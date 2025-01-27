@@ -8,8 +8,11 @@
 #include"ctime"
 using namespace std;
 
+/**
+ * The function "beep" plays a beep sound with a frequency of 820 Hz for 200 milliseconds.
+ */
 void beep(){
-     Beep(820,200);  //-> freq,ms
+     Beep(820,200); 
 }
 // !    LOIN MENU PROTOTYPES
 void displayHeader(void);
@@ -98,7 +101,7 @@ void displayTopPerformers(Student[],int);
 void gradeAnalysis(Student[],int);
 // ! Attandance tracking
 void attendanceTrack(Student[],int);
-//!                                 "MAIN SCOPE "
+//!                                             "MAIN SCOPE "
 /**
  * The main function calls the loginMenu function and then the mainMenu function if the login is
  * successful.
@@ -814,6 +817,21 @@ bool StudentContactInformation::validateEmail(){
 
     return find;
 }
+/**
+ * The function `viewRecords` displays information about students, including personal, contact, and
+ * academic details, along with their grades if specified.
+ * 
+ * @param students The `students` parameter is an array of `Student` objects, which contains
+ * information about multiple students such as personal information, contact information, and academic
+ * information. Each element in the array represents a single student.
+ * @param noOfStds The `noOfStds` parameter in the `viewRecords` function represents the number of
+ * students in the `students` array that you want to display the records for. It is used to determine
+ * how many student records should be processed and displayed by the function.
+ * @param avgGrade The `avgGrade` parameter in the `viewRecords` function is a boolean flag that
+ * determines whether to display the average grade of each student along with their academic
+ * information. If `avgGrade` is set to `true`, the function will include the average grade in the
+ * output for each student. If
+ */
 void viewRecords(Student students[],int noOfStds,bool avgGrade){
     if(noOfStds>0){
     cout<<"\033[33m\t\tNUMBER OF STUDENTS FOUND "<<(noOfStds)<<"\033[0m\n";
@@ -897,7 +915,18 @@ void searchStudents(Student students[],int noOfStudents){
         }
     cout<<"Sorry No Record found with "<<userInput<<endl;
 }
-// ! Delete Students Records
+/**
+ * The function `deleteStudent` allows users to delete a student from an array of `Student` objects
+ * based on their ID.
+ * 
+ * @param students The `students` parameter is an array of `Student` objects. Each `Student` object
+ * likely contains information about a student, such as their personal information like ID, name,
+ * address, etc.
+ * @param noOfStds The parameter `noOfStds` in the `deleteStudent` function is a reference to an
+ * integer variable that represents the number of students in the `students` array. This variable is
+ * updated within the function when a student is successfully deleted, reducing the count of students
+ * in the array by one.
+ */
 void deleteStudent(Student students[],int &noOfStds){
         char choice = 'n';
         bool userStatus=false;
@@ -926,7 +955,20 @@ void deleteStudent(Student students[],int &noOfStds){
             cin>>choice;
         }while(choice=='y' || choice=='Y');
 }
-//! Display Search records
+/**
+ * The function `viewRecords` displays detailed information about a student's personal, contact, and
+ * academic information.
+ * 
+ * @param students The `students` parameter in the `viewRecords` function is an array of `Student`
+ * objects. Each `Student` object contains information about a student's personal, contact, and
+ * academic details.
+ * @param noOfStds The `noOfStds` parameter in the `viewRecords` function represents the total number
+ * of students in the `students` array. It is used to determine if there are any students to display.
+ * If `noOfStds` is greater than 0, the function will display the information
+ * @param index The `index` parameter in the `viewRecords` function is used to specify the index of the
+ * student in the `students` array whose records you want to view. This index determines which
+ * student's information will be displayed when the function is called.
+ */
 void viewRecords(Student students[],int noOfStds,int index){
     if(noOfStds>0){
     cout<<"╭───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
