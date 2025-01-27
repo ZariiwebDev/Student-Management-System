@@ -1196,7 +1196,25 @@ void gradeAnalysis(Student students[],int noOfStds){
         }
     }
 }
-// ! Saving record in a file
+/**
+ * The function `saveRecords` writes student records to a text file in a formatted manner, including
+ * personal, contact, and academic information along with grades.
+ * 
+ * @param students The `students` parameter is an array of `Student` objects. Each `Student` object
+ * contains information about a particular student, including personal information, contact
+ * information, and academic information such as courses enrolled, course names, total marks, obtained
+ * marks, grades, and average grade.
+ * @param noOfStds The `noOfStds` parameter in the `saveRecords` function represents the number of
+ * `Student` objects in the `students` array that you want to save records for. It indicates the total
+ * count of students whose information will be written to the output file.
+ * @param avgGrade The `avgGrade` parameter in the `saveRecords` function is a boolean flag that
+ * determines whether to include the average grade information for each student in the saved records.
+ * If `avgGrade` is `true`, the function will include the average grade information in the output file
+ * for each student. If
+ * 
+ * @return The function `saveRecords` returns a boolean value - `true` if the records were successfully
+ * saved to the file, and `false` if there was an issue with opening or writing to the file.
+ */
 bool saveRecords(Student students[],int noOfStds,bool avgGrade){
     fstream file("./records/studentsRecord.txt",ios::out);
     if(!file){
@@ -1249,6 +1267,14 @@ bool saveRecords(Student students[],int noOfStds,bool avgGrade){
         return true;
     }
 }
+/**
+ * The function `loadRecords` reads and displays student records from a file, returning true if
+ * successful and false if no records are found.
+ * 
+ * @return The function `loadRecords()` returns a boolean value. If the records are successfully loaded
+ * from the file "studentsRecord.txt", it returns true. If there are no records found in the file or if
+ * there is an issue with reading the file, it returns false.
+ */
 bool loadRecords(){
     string line;
     fstream file("./records/studentsRecord.txt",ios::in);
