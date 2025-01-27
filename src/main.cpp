@@ -25,7 +25,7 @@ void currentLoginStatus(void);
 void mainMenuDisplay(void);
 void mainMenu(void);
 
-//! Student Record Prototype & structure
+//! Student Recor d Prototype & structure
 // ! ADD NEW RECORD 
 struct StudentPersonalInformation
 {
@@ -94,6 +94,8 @@ bool loadRecords();
 void displayTopPerformers(Student[],int);
 // ! GRADE ANALYSIS
 void gradeAnalysis(Student[],int);
+// ! Attandance tracking
+void attendanceTrack(Student[],int);
 //!                                 "MAIN SCOPE "
 int main() {
     bool res = loginMenu();
@@ -124,7 +126,7 @@ bool validID(string id){
     }
     return true;
 }
-// generating login id for user
+// generating login id 
 string generatingLoginID(){
     cout<<"\tgenerating..."<<endl;
     srand(time(0));
@@ -435,6 +437,12 @@ void mainMenu(){
                 cout<<"No records Found !\n";
             }
         }
+        else if(choice == 12){
+                // if(track){
+                    cout<<"\033[32m-▶>> You Selected Option 11\033[0m"<<endl;
+                    attendanceTrack(students,trackNumberOfStudentsAdded);
+                // }
+        }
         else if(choice==13){
             cout<<"\033[32m-▶>> You Selected Option 13\033[0m"<<endl;
             loginMenu();
@@ -728,17 +736,17 @@ void viewRecords(Student students[],int noOfStds,bool avgGrade){
     cout<<"│\n";
     cout<<"│\t\tCourses Enrolled: "<<students[i].acedamicInfo.noOfcourses<<"\n";
     cout<<"│\n";
-    cout<<"│\t\t\t\t╭────────────────────────────────────────────────────────────────────╮\n";
-    cout<<"│\t\t\t\t│NAMES"<<"\t\t"<<"TOTAL MARKS"<<"\t\t"<<"OBTAINED MARKS"<<"\t\t"<<"GRADE│"<<"\n";
-    cout<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
+    cout<<"│\t\t\t\t╭─────────────────────────────────────────────────────────────────────────────────────────╮\n";
+    cout<<"│\t\t\t\t│NAMES"<<fixed<<setw(29)<<"TOTAL MARKS"<<setw(29)<<"OBTAINED MARKS"<<setw(29)<<"GRADE│"<<"\n";
+    cout<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
     for(int j=0;j<students[i].acedamicInfo.noOfcourses;j++){
-    cout<<"│\t\t\t\t│"<<fixed<<students[i].acedamicInfo.coursesNames[j]<<fixed<<setw(18)<<students[i].acedamicInfo.coursesTotalMarks[j]<<setw(28)<<students[i].acedamicInfo.coursesObtainedMarks[j]<<setw(18)<<students[i].acedamicInfo.coursesGrades[j]<<setw(6)<<fixed<<"│\n";
+    cout<<"│\t\t\t\t│"<<fixed<<students[i].acedamicInfo.coursesNames[j]<<fixed<<setw(6)<<students[i].acedamicInfo.coursesTotalMarks[j]<<setw(18)<<students[i].acedamicInfo.coursesObtainedMarks[j]<<setw(37)<<students[i].acedamicInfo.coursesGrades[j]<<setw(8)<<fixed<<"│\n";
     }
     if(avgGrade){
-    cout<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
-    cout<<"│\t\t\t\t│"<<fixed<<setw(35)<<"GRADE = "<<students[i].acedamicInfo.averageGrade<<setw(35)<<"│"<<endl;
+    cout<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
+    cout<<"│\t\t\t\t│"<<fixed<<setw(50)<<"GRADE = "<<students[i].acedamicInfo.averageGrade<<setw(41)<<"│"<<endl;
     }
-    cout<<"│\t\t\t\t╰────────────────────────────────────────────────────────────────────╯\n";
+    cout<<"│\t\t\t\t╰─────────────────────────────────────────────────────────────────────────────────────────╯\n";
     cout<<"│\n";
     cout<<"│\n";
     }
@@ -824,10 +832,13 @@ void viewRecords(Student students[],int noOfStds,int index){
     cout<<"│\t\t\t\t╭────────────────────────────────────────────────────────────────────╮\n";
     cout<<"│\t\t\t\t│NAMES"<<"\t\t"<<"TOTAL MARKS"<<"\t\t"<<"OBTAINED MARKS"<<"\t\t"<<"GRADE│"<<"\n";
     cout<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
+    cout<<"│\t\t\t\t╭─────────────────────────────────────────────────────────────────────────────────────────╮\n";
+    cout<<"│\t\t\t\t│NAMES"<<fixed<<setw(29)<<"TOTAL MARKS"<<setw(29)<<"OBTAINED MARKS"<<setw(29)<<"GRADE│"<<"\n";
+    cout<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
     for(int j=0;j<students[index].acedamicInfo.noOfcourses;j++){
-    cout<<"│\t\t\t\t│"<<fixed<<students[index].acedamicInfo.coursesNames[j]<<fixed<<setw(18)<<students[index].acedamicInfo.coursesTotalMarks[j]<<setw(28)<<students[index].acedamicInfo.coursesObtainedMarks[j]<<setw(18)<<students[index].acedamicInfo.coursesGrades[j]<<setw(6)<<fixed<<"│\n";
+    cout<<"│\t\t\t\t│"<<fixed<<students[index].acedamicInfo.coursesNames[j]<<fixed<<setw(6)<<students[index].acedamicInfo.coursesTotalMarks[j]<<setw(18)<<students[index].acedamicInfo.coursesObtainedMarks[j]<<setw(37)<<students[index].acedamicInfo.coursesGrades[j]<<setw(8)<<fixed<<"│\n";
     }
-    cout<<"│\t\t\t\t╰────────────────────────────────────────────────────────────────────╯\n";
+     cout<<"│\t\t\t\t╰─────────────────────────────────────────────────────────────────────────────────────────╯\n";
     cout<<"│\n";
     cout<<"│\n";
     cout<<"│\n";
@@ -1041,23 +1052,23 @@ bool saveRecords(Student students[],int noOfStds,bool avgGrade){
     file<<"│\n";
     file<<"│\t\tCourses Enrolled: "<<students[i].acedamicInfo.noOfcourses<<"\n";
     file<<"│\n";
-    file<<"│\t\t\t\t╭────────────────────────────────────────────────────────────────────╮\n";
-    file<<"│\t\t\t\t│NAMES"<<"\t\t"<<"TOTAL MARKS"<<"\t\t"<<"OBTAINED MARKS"<<"\t\t"<<"GRADE""│"<<"\n";
-    file<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
+    file<<"│\t\t\t\t╭─────────────────────────────────────────────────────────────────────────────────────────╮\n";
+    file<<"│\t\t\t\t│NAMES"<<fixed<<setw(29)<<"TOTAL MARKS"<<setw(29)<<"OBTAINED MARKS"<<setw(29)<<"GRADE│"<<"\n";
+    file<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
     for(int j=0;j<students[i].acedamicInfo.noOfcourses;j++){
-    file<<"│\t\t\t\t│"<<fixed<<students[i].acedamicInfo.coursesNames[j]<<fixed<<setw(18)<<students[i].acedamicInfo.coursesTotalMarks[j]<<setw(28)<<students[i].acedamicInfo.coursesObtainedMarks[j]<<setw(18)<<students[i].acedamicInfo.coursesGrades[j]<<setw(6)<<fixed<<"│\n";
+    file<<"│\t\t\t\t│"<<fixed<<students[i].acedamicInfo.coursesNames[j]<<fixed<<setw(6)<<students[i].acedamicInfo.coursesTotalMarks[j]<<setw(18)<<students[i].acedamicInfo.coursesObtainedMarks[j]<<setw(37)<<students[i].acedamicInfo.coursesGrades[j]<<setw(8)<<fixed<<"│\n";
     }
     if(avgGrade){
-    file<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
-    file<<"│\t\t\t\t│"<<fixed<<setw(35)<<"GRADE = "<<students[i].acedamicInfo.averageGrade<<setw(35)<<"│"<<endl;
+    file<<"│\t\t\t\t│┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅│"<<"\n";
+    file<<"│\t\t\t\t│"<<fixed<<setw(50)<<"GRADE = "<<students[i].acedamicInfo.averageGrade<<setw(41)<<"│"<<endl;
     }
-    file<<"│\t\t\t\t╰────────────────────────────────────────────────────────────────────╯\n";
+    file<<"│\t\t\t\t╰─────────────────────────────────────────────────────────────────────────────────────────╯\n";
     file<<"│\n";
     file<<"│\n";
     }
     file<<"│\n";
     file<<"╰───────────────────────────────────────────────────────────────────────────────────────────────────────\n";
-        
+        file.close();
         return true;
     }
 }
@@ -1089,3 +1100,83 @@ bool loadRecords(){
     }
 }
 
+void attendanceTrack(Student students[],int noOfStds){
+    char attandance[noOfStds]={'0'};
+    int choice;
+    bool track=false;
+    bool saveTrack=false;
+    char continueUser='n';
+    do{
+        cout<<"Press 1 for track attandance\n";
+        cout<<"Press 2 for view attdance \n";
+        cout<<"Press 3 for save attandance record\n";
+        cout<<"Press 4 for load attandance record\n";
+        cout<<"Press 5 to goback to main Menu \n";  
+        do{
+            cout<<"Enter Your choice [1-5] :";
+            cin>>choice;
+            if(!(choice>=1 && choice<=5)){
+                track=true;
+                cout<<"Please enter valid choice\n";
+            }
+        }while(!(choice>=1 && choice<=5));
+        if(noOfStds>0){
+        if(choice ==1){
+            track=true;
+            cout<<"Tracking attandace... \n";
+            for(int i=0;i<noOfStds;i++){
+                do{
+                    cout<<"\t Student Name : "<<students[i].personalInfo.fullName<<endl;
+                    cout<<"Enter P if present A if absent :  ";
+                    cin>>attandance[i];
+                    attandance[i] = toupper(attandance[i]); 
+                }while(!(attandance[i]=='A' || attandance[i]=='P'));
+            }
+        }
+        else if(choice == 2){
+            if(track){
+                cout<<"\033[33mTracked Attandance "<<noOfStds<<"\033[0m"<<endl;
+                for(int i=0;i<noOfStds;i++){
+                    cout<<fixed<<students[i].personalInfo.stdID<<setw(20)<<students[i].personalInfo.fullName<<setw(20)<<attandance[i]<<endl;
+                }
+            }else{
+                cout<<"Please first track attandance \n";
+            }
+        }
+        else if(choice == 3){
+            if(track){
+                saveTrack=true;
+                cout<<"Saving records ...\n";
+                fstream file("./AttandaceRecord/attandance.txt",ios::out);
+                if(!file){
+                    cout<<"File Does Not Opened please try later !\n";
+                }else{
+                    file<<"Tracked Attandance "<<noOfStds<<endl;
+                    for(int i=0;i<noOfStds;i++){
+                        file<<fixed<<students[i].personalInfo.stdID<<setw(20)<<students[i].personalInfo.fullName<<setw(20)<<attandance[i]<<endl;
+                    }
+                    cout<<"Attandance saved successfully ✅\n";
+                }
+            }else{
+                cout<<"Please first track attandance \n";
+            }
+        }
+        }else{
+            cout<<"Please First add record !\n";
+        }
+         if(choice == 4){
+                cout<<"loading records ...\n";
+                fstream file("./AttandaceRecord/attandance.txt",ios::in);
+                string line;
+                while(getline(file,line)){
+                    cout<<line<<endl;
+                }
+            }
+        else if(choice == 5){
+            mainMenu();
+        }
+        cout<<"Do you want to continue to attandance track operation (y/n) :";
+        cin>>continueUser;
+    }while(continueUser == 'y');
+
+}
